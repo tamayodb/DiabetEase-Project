@@ -1,6 +1,7 @@
 ## Diabetease - Android Studio Project
 Diabetease is an Android application designed to help individuals with diabetes manage their condition effectively. The app provides useful tools such as blood sugar level tracking, meal planning, medication reminders, and other essential resources for managing diabetes.
-**Note:** This is a prototype version of the Diabetease app. Further development will be added in the future to enhance its features and functionality. This project is part of my Application Development class.
+
+**Note:** This is a prototype version of the Diabetease app. Further development will be added in the future to enhance its features and functionality. This project is part of our Application Development class.
 
 ### Features
 - Blood Sugar Level Tracker: Log and monitor your blood sugar levels to keep track of daily trends.
