@@ -3,19 +3,30 @@ package com.example.diabetease;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.app.AlertDialog;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Step3Activity extends AppCompatActivity {
 
@@ -71,23 +82,71 @@ public class Step3Activity extends AppCompatActivity {
         setupSection(R.id.section4, "Data Security", "We implement industry-standard security measures to protect your data from unauthorized access, loss, or misuse.");
         setupSection(R.id.section5, "Your Choices and Rights", "You can update or delete your data at any time through the app settings. You may also contact us to request access, correction, or deletion of your personal information.");
 
+        // Setup buttons
+        Button refuseBtn = findViewById(R.id.refuse_button);
+        Button acceptBtn = findViewById(R.id.accept_button);
+
+        acceptBtn.setOnClickListener(v -> {
+            // Get passed data
+            String firstName = getIntent().getStringExtra("firstName");
+            String lastName = getIntent().getStringExtra("lastName");
+            String birthdate = getIntent().getStringExtra("birthdate");
+            String email = getIntent().getStringExtra("email");
+            String password = getIntent().getStringExtra("password");
+
+            // Register to Firebase Auth
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser firebaseUser = task.getResult().getUser();
+                            String userId = firebaseUser.getUid();
+
+                            // Store additional user info to Firestore
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            Map<String, Object> userMap = new HashMap<>();
+                            userMap.put("firstName", firstName);
+                            userMap.put("lastName", lastName);
+                            userMap.put("birthdate", birthdate);
+                            userMap.put("email", email);
+
+                            db.collection("users").document(userId).set(userMap)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Go to Step4Activity
+                                        Intent intent = new Intent(Step3Activity.this, Step4Activity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Firestore write failed
+                                        Toast.makeText(this, "Failed to save user data: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    });
+
+                        } else {
+                            // Auth failed
+                            Toast.makeText(this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
+
+        refuseBtn.setOnClickListener(v -> {
+            new AlertDialog.Builder(Step3Activity.this)
+                    .setTitle("Privacy Policy Required")
+                    .setMessage("You must accept the privacy policy to continue using the app.")
+                    .setPositiveButton("OK", null)
+                    .show();
+        });
     }
-
-
 
     // Animate expanding a section
     private void expandSection(TextView contentView, ImageView toggleIcon) {
-        // Change icon first
         toggleIcon.setImageResource(R.drawable.ic_minus);
 
-        // Make the view visible but with height 0
         contentView.setVisibility(View.VISIBLE);
         contentView.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         int targetHeight = contentView.getMeasuredHeight();
         contentView.getLayoutParams().height = 0;
         contentView.requestLayout();
 
-        // Create an animation to expand the height
         ValueAnimator animator = ValueAnimator.ofInt(0, targetHeight);
         animator.setDuration(300);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -133,6 +192,4 @@ public class Step3Activity extends AppCompatActivity {
         });
         animator.start();
     }
-
-
 }
