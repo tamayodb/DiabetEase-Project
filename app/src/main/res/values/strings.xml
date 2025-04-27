@@ -2,7 +2,7 @@
     <string name="app_name">DiabetEase</string>
     <string name="Login">Login</string>
     <string name="Welcome">Welcome to</string>
-    <string name="Start">Get Started</string>
+    <string name="Start">Create an account</string>
     <string name="Diabet">Diabet</string>
     <string name="Ease">Ease</string>
     <string name="Slogan">Your Smart Partner for Empowered Diabetes Care</string>
@@ -33,4 +33,6 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="step3_descript">At DiabetEase, we are committed to protecting the privacy and security of your personal information. This Privacy Policy outlines how we collect, use, disclose, and safeguard your data when you use our mobile application.</string>
     <string name="step4_descript">Explore our meal planning, nutritional guidance, smart integrations, and more to manage your diabetes with ease and confidence.</string>
+    <string name="welcome_back">Welcome back!</string>
+    <string name="slogan_login">Good to see you again</string>
 </resources>
