@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "255742329763",
+    "project_id": "mpas-0j3h02",
+    "storage_bucket": "mpas-0j3h02.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255742329763:android:8b6599f16dcdc020f7d016",
+        "android_client_info": {
+          "package_name": "com.example.diabetease"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCpG856uXNHqp0r0Z9m7rY_A9NxvauzfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
