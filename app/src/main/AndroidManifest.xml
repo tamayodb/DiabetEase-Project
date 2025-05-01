@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DiabetEase">
         <activity
+            android:name=".samplecontainer"
+            android:exported="false" />
+        <activity
+            android:name=".each_item"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity

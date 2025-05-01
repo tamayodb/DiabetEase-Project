@@ -21,6 +21,8 @@ public class RecipeActivity extends BaseActivity {
             return insets;
         });
 
+
+
         setupNavigationBar();
     }
 }
