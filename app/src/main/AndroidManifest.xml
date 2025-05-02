@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DiabetEase">
         <activity
-            android:name=".samplecontainer"
+            android:name=".RecipeChooseFruit"
             android:exported="false" />
         <activity
-            android:name=".each_item"
+            android:name=".RecipeChooseVegetable"
+            android:exported="false" />
+        <activity
+            android:name=".RecipeChooseMeat"
             android:exported="false" />
         <activity
             android:name=".ProfileActivity"
