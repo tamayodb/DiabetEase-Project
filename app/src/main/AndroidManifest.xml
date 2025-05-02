@@ -27,6 +27,15 @@
             android:name=".Step4Activity"
             android:exported="false" />
         <activity
+            android:name=".RecipeChooseVegetable"
+            android:exported="false" />
+        <activity
+            android:name=".RecipeChooseMeat"
+            android:exported="false" />
+        <activity
+            android:name=".RecipeChooseFruit"
+            android:exported="false" />
+        <activity
             android:name=".Step3Activity"
             android:exported="false" />
         <activity
