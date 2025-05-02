@@ -1,31 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
+    android:layout_width="350dp"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
-    android:elevation="8dp"
-    android:orientation="vertical">
+    android:clickable="true"
+    android:background="@android:color/transparent"
+    app:cardCornerRadius="20dp"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true"
+    >
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:background="@android:color/transparent">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/blogImage"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerCrop" />
+            android:layout_height="300dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedCornerImage" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_alignTop="@id/blogImage"
+            android:background="#80000000" />
+
+        <!-- Top-left Category -->
         <TextView
-            android:id="@+id/blogTitle"
+            android:id="@+id/blogCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/blogImage"
+            android:layout_margin="12dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/poppins_bold"
+            android:text="CATEGORY"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white" />
+
+        <!-- Top-right Reading Time -->
+        <TextView
+            android:id="@+id/blogReadingTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/blogImage"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="12dp"
+            android:fontFamily="@font/poppins_light"
+            android:text="min read"
+            android:textColor="@android:color/white" />
+
+        <!-- Bottom Overlay -->
+        <LinearLayout
+            android:id="@+id/infoOverlay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Blog Title"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_alignBottom="@id/blogImage"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/blogTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Blog Title"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>
