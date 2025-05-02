@@ -1,6 +1,7 @@
 package com.example.diabetease;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,17 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
         if (holder.blogReadingTime != null) {
             holder.blogReadingTime.setText(String.valueOf(blog.getReading_time()) + " min read");
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, SpecificBlogActivity.class);
+            intent.putExtra("title", blog.getTitle());
+            intent.putExtra("category", blog.getCategory());
+            intent.putExtra("image", blog.getCover_image_url());
+            intent.putExtra("author", blog.getAuthor());
+            intent.putExtra("createdAt", blog.getCreated_at());
+            intent.putExtra("content", blog.getContent());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -84,11 +96,6 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
             blogTitle = itemView.findViewById(R.id.blogTitle);
             blogCategory = itemView.findViewById(R.id.blogCategory);
             blogReadingTime = itemView.findViewById(R.id.blogReadingTime);
-
-            if (viewType == VIEW_TYPE_HORIZONTAL) {
-                 ImageView likeIcon = itemView.findViewById(R.id.likeIcon);
-                 ImageView bookmarkIcon = itemView.findViewById(R.id.bookmarkIcon);
-            }
         }
     }
 }
