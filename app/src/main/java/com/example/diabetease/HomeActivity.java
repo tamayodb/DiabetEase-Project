@@ -1,10 +1,7 @@
 package com.example.diabetease;
 
 import android.os.Bundle;
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,42 +14,46 @@ import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 
-        RecyclerView horizontalRecycler, verticalRecycler;
-        BlogAdapter adapter;
-        List<Blog> blogs = new ArrayList<>();
+    RecyclerView horizontalRecycler, verticalRecycler;
+    BlogAdapter horizontalAdapter, verticalAdapter;
+    List<Blog> blogs = new ArrayList<>();
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_home);
-            setupNavigationBar();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+        setupNavigationBar();
 
-            horizontalRecycler = findViewById(R.id.horizontalRecyclerView);
-            verticalRecycler = findViewById(R.id.verticalRecyclerView);
+        horizontalRecycler = findViewById(R.id.horizontalRecyclerView);
+        verticalRecycler = findViewById(R.id.verticalRecyclerView);
 
-            // Layout managers
-            horizontalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-            verticalRecycler.setLayoutManager(new LinearLayoutManager(this));
+        horizontalRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        verticalRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-            adapter = new BlogAdapter(this, blogs);
-            horizontalRecycler.setAdapter(adapter);
-            verticalRecycler.setAdapter(adapter);
+        // Create separate adapters for horizontal and vertical RecyclerViews
+        horizontalAdapter = new BlogAdapter(this, blogs, false); // for horizontal
+        horizontalRecycler.setAdapter(horizontalAdapter);
 
-            fetchBlogsFromFirestore();
-        }
+        verticalAdapter = new BlogAdapter(this, blogs, true); // for vertical
+        verticalRecycler.setAdapter(verticalAdapter);
 
-        private void fetchBlogsFromFirestore() {
-            FirebaseFirestore.getInstance().collection("blogs")
-                    .orderBy("created_at", Query.Direction.DESCENDING)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        blogs.clear();
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            Blog blog = doc.toObject(Blog.class);
-                            blogs.add(blog);
-                        }
-                        adapter.notifyDataSetChanged();
-                    });
-        }
+        // Fetch blogs from Firestore and update both adapters
+        fetchBlogsFromFirestore();
     }
 
+    private void fetchBlogsFromFirestore() {
+        FirebaseFirestore.getInstance().collection("blogs")
+                .orderBy("created_at", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    blogs.clear();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        Blog blog = doc.toObject(Blog.class);
+                        blogs.add(blog);
+                    }
+                    // Notify both adapters about the data change
+                    horizontalAdapter.notifyDataSetChanged();
+                    verticalAdapter.notifyDataSetChanged();
+                });
+    }
+}
