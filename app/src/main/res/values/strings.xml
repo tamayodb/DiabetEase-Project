@@ -35,4 +35,16 @@
     <string name="step4_descript">Explore our meal planning, nutritional guidance, smart integrations, and more to manage your diabetes with ease and confidence.</string>
     <string name="welcome_back">Welcome back!</string>
     <string name="slogan_login">Good to see you again</string>
+    <string name="select_ingredients">Select Ingredients</string>
+    <string name="recipe">Recipe</string>
+    <string name="not_sure_what_meal_fits_your_diet_or_diabetes_needs_let_s_create_a_recipe_based_on_what_s_inside_your_fridge">Not sure what meal fits your diet or diabetes needs? Let\'s create a recipe based on what\'s inside your fridge!</string>
+    <string name="fruits">Fruits</string>
+    <string name="vegetables">Vegetables</string>
+    <string name="meat_proteins">Meat / Proteins</string>
+    <string name="menuicon">MenuIcon</string>
+    <string name="arrow" />
+    <string name="icon" />
+    <string name="back_button_recipe_meat">back button recipe meat</string>
+    <string name="back_button_vegetable">back button vegetable</string>
+    <string name="back_button_recipe_fruit">back button recipe fruit</string>
 </resources>
