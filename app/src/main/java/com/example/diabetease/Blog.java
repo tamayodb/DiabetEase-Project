@@ -8,7 +8,7 @@ public class Blog {
     private String category;
     private String content;
     private String cover_image_url;
-    private Timestamp created_at;
+    private String created_at;
     private String excerpt;
     private boolean like_enabled;
     private int likes_count;
@@ -24,7 +24,7 @@ public class Blog {
     public String getCategory() { return category; }
     public String getContent() { return content; }
     public String getCover_image_url() { return cover_image_url; }
-    public Timestamp getCreated_at() { return created_at; }
+    public String getCreated_at() { return created_at; }
     public String getExcerpt() { return excerpt; }
     public boolean isLike_enabled() { return like_enabled; }
     public int getLikes_count() { return likes_count; }
