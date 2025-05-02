@@ -1,25 +1,33 @@
 package com.example.diabetease;
 
+import android.content.Intent;
 import android.os.Bundle;
-import androidx.activity.EdgeToEdge;
+import android.view.View;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class RecipeChooseVegetable extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe_choose_vegetable);
 
-        // Handling insets for system bars
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        // Initialize the back button ImageView
+        ImageView backButton = findViewById(R.id.back_button_recipe);
+
+        // Set click listener for the back button
+        backButton.setOnClickListener(view -> {
+            // Option 1: Simply finish to go back to previous screen
+            finish();
+
+            // Option 2: Explicitly navigate to RecipeActivity
+            // Uncomment the lines below if you prefer navigation instead
+            /*
+            Intent intent = new Intent(RecipeChooseVegetable.this, RecipeActivity.class);
+            startActivity(intent);
+            */
         });
     }
 }

@@ -44,4 +44,7 @@
     <string name="menuicon">MenuIcon</string>
     <string name="arrow" />
     <string name="icon" />
+    <string name="back_button_recipe_meat">back button recipe meat</string>
+    <string name="back_button_vegetable">back button vegetable</string>
+    <string name="back_button_recipe_fruit">back button recipe fruit</string>
 </resources>
