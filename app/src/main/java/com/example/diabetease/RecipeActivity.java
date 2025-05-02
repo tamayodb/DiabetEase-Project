@@ -1,5 +1,6 @@
 package com.example.diabetease;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -42,9 +43,23 @@ public class RecipeActivity extends BaseActivity {
         setupCustomButton(meatButton, R.drawable.meat_icon, R.string.meat_proteins);
 
         // Button listeners
-        fruitButton.setOnClickListener(view -> navigateToIngredientSelection("fruits"));
-        vegetableButton.setOnClickListener(view -> navigateToIngredientSelection("vegetables"));
-        meatButton.setOnClickListener(view -> navigateToIngredientSelection("meat"));
+        fruitButton.setOnClickListener(view -> {
+            // Navigate to Fruit activity
+            Intent intent = new Intent(this, RecipeChooseFruit.class);
+            startActivity(intent);
+        });
+
+        vegetableButton.setOnClickListener(view -> {
+            // Navigate to Vegetable activity
+            Intent intent = new Intent(this, RecipeChooseVegetable.class);
+            startActivity(intent);
+        });
+
+        meatButton.setOnClickListener(view -> {
+            // Navigate to Meat activity
+            Intent intent = new Intent(this, RecipeChooseMeat.class);
+            startActivity(intent);
+        });
     }
 
     private void setupCustomButton(CardView button, int iconResId, int textResId) {
@@ -53,9 +68,5 @@ public class RecipeActivity extends BaseActivity {
 
         if (icon != null) icon.setImageResource(iconResId);
         if (text != null) text.setText(textResId);
-    }
-
-    private void navigateToIngredientSelection(String category) {
-        System.out.println("Navigating to " + category + " selection");
     }
 }
