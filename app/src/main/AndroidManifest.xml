@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DiabetEase">
         <activity
+            android:name=".SpecificBlogActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
@@ -22,6 +25,15 @@
             android:exported="false" />
         <activity
             android:name=".Step4Activity"
+            android:exported="false" />
+        <activity
+            android:name=".RecipeChooseVegetable"
+            android:exported="false" />
+        <activity
+            android:name=".RecipeChooseMeat"
+            android:exported="false" />
+        <activity
+            android:name=".RecipeChooseFruit"
             android:exported="false" />
         <activity
             android:name=".Step3Activity"
