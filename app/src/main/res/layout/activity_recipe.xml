@@ -127,4 +127,24 @@
             android:layout_height="wrap_content" />
     </FrameLayout>
 
+    <Button
+        android:id="@+id/continue_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/custom_button"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView23" />
+
+    <TextView
+        android:id="@+id/selected_items_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected items will appear here"
+        android:textSize="16sp"
+        android:padding="8dp" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
