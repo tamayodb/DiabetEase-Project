@@ -7,30 +7,92 @@
     android:layout_height="match_parent"
     tools:context=".RecipeChooseFruit">
 
-    <!-- Back Button Icon -->
+    <!-- Back Button -->
     <ImageView
-        android:id="@+id/back_button_recipe"
+        android:id="@+id/back_button_recipe_fruit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/back_button_recipe_fruit"
-        app:srcCompat="@drawable/recipe_back_btn"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/back_button_recipe_fruit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/recipe_back_btn" />
 
-    <!-- "Fruit" Title -->
+    <!-- Title -->
     <TextView
         android:id="@+id/fruit_title_head"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/fruits"
-        android:textSize="16sp"
-        android:textColor="@color/black"
+        android:layout_marginStart="8dp"
         android:fontFamily="@font/poppins_medium"
-        app:layout_constraintTop_toTopOf="@+id/back_button_recipe"
-        app:layout_constraintBottom_toBottomOf="@+id/back_button_recipe"
-        app:layout_constraintStart_toEndOf="@+id/back_button_recipe"
-        android:layout_marginStart="8dp" />
+        android:text="@string/fruits"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/back_button_recipe_fruit"
+        app:layout_constraintStart_toEndOf="@+id/back_button_recipe_fruit"
+        app:layout_constraintTop_toTopOf="@+id/back_button_recipe_fruit" />
+
+    <!-- Select Fruits Text -->
+    <TextView
+        android:id="@+id/select_fruits_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Select Fruits"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back_button_recipe_fruit" />
+
+    <!-- Help Text -->
+    <TextView
+        android:id="@+id/fruit_help_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="@string/tap_on_fruits_to_select_them_for_your_recipe"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/select_fruits_text" />
+
+    <!-- Fruits RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fruits_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/confirm_fruits_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fruit_help_text"
+        tools:listitem="@layout/item_fruit" />
+
+    <!-- Confirm Button -->
+    <Button
+        android:id="@+id/confirm_fruits_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/rounded_button_bg"
+        android:fontFamily="@font/poppins_medium"
+        android:text="@string/confirm_selection"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

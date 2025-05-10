@@ -67,6 +67,8 @@
     <string name="recipe_description_placeholder">Recipe instructions will appear here.</string>
     <string name="ingredients">Ingredients</string>
     <string name="ingredients_list_placeholder">Selected ingredients will appear here.</string>
+    <string name="tap_on_fruits_to_select_them_for_your_recipe">Tap on fruits to select them for your Recipe</string>
+    <string name="tap_on_proteins_to_select_them_for_your_recipe">Tap on Meat/Proteins to select them for your Recipe</string>c
 
 
 </resources>

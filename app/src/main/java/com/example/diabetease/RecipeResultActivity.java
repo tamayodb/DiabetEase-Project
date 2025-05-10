@@ -40,7 +40,7 @@ public class RecipeResultActivity extends BaseActivity {
         // Get selected ingredients from intent
         ArrayList<String> selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");
         ArrayList<String> selectedVegetables = getIntent().getStringArrayListExtra("selected_vegetables");
-        ArrayList<String> selectedMeats = getIntent().getStringArrayListExtra("selected_meats");
+        ArrayList<String> selectedMeats = getIntent().getStringArrayListExtra("selected_meat");
 
         // Display ingredients
         displaySelectedIngredients(selectedFruits, selectedVegetables, selectedMeats);

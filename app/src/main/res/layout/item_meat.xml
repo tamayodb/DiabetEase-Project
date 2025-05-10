@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/meat_item_card"
+    android:layout_width="100dp"
+    android:layout_height="120dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/meat_icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:contentDescription="@+string/meat_icon"
+            android:padding="8dp"
+            android:src="@drawable/ic_carrot" />
+
+        <TextView
+            android:id="@+id/meat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="@+string/chicken"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
