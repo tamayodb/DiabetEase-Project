@@ -39,3 +39,4 @@ coverage/
 
 # Kotlin specific
 *.kotlin_module
+"firestore-import/serviceAccountKey.json" 
