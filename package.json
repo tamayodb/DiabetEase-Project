@@ -1,0 +1,15 @@
+{
+  "name": "diabetease-project",
+  "version": "1.0.0",
+  "description": "Diabetease is an Android application designed to help individuals with diabetes manage their condition effectively. The app provides useful tools such as blood sugar level tracking, meal planning, medication reminders, and other essential resources for managing diabetes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase-admin": "^13.3.0"
+  }
+}
