@@ -130,12 +130,8 @@
                         android:layout_marginTop="16dp"
                         android:fontFamily="@font/poppins_light"
                         android:text="."
-                        android:lineSpacingExtra="4dp"
-                        android:firstBaselineToTopHeight="24dp"
                         android:textColor="#424242"
-                        android:textSize="16sp"
-                        android:justificationMode="inter_word"
-                        android:textAlignment="viewStart" />
+                        android:textSize="16sp" />
 
                 </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
