@@ -61,7 +61,7 @@ public class RecipeActivity extends BaseActivity {
         vegetableButton = findViewById(R.id.vegetable_button);
         meatButton = findViewById(R.id.meat_button);
         continueButton = findViewById(R.id.continue_button);
-        selectedItemsText = findViewById(R.id.selected_items_text);
+//        selectedItemsText = findViewById(R.id.selected_items_text);
 
         // Set up result launchers
         setupResultLaunchers();
@@ -75,7 +75,7 @@ public class RecipeActivity extends BaseActivity {
         setupButtonListeners();
 
         // Update the selected items text
-        updateSelectedItemsText();
+//        updateSelectedItemsText();
     }
 
     private void setupResultLaunchers() {
@@ -87,7 +87,7 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedFruits = result.getData().getStringArrayListExtra("selected_fruits");
                         if (selectedFruits != null) {
                             selectedIngredients.put("fruits", selectedFruits);
-                            updateSelectedItemsText();
+//                            updateSelectedItemsText();
                         }
                     }
                 }
@@ -101,7 +101,7 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedVegetables = result.getData().getStringArrayListExtra("selected_vegetables");
                         if (selectedVegetables != null) {
                             selectedIngredients.put("vegetables", selectedVegetables);
-                            updateSelectedItemsText();
+//                            updateSelectedItemsText();
                         }
                     }
                 }
@@ -115,7 +115,7 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedMeats = result.getData().getStringArrayListExtra("selected_meats");
                         if (selectedMeats != null) {
                             selectedIngredients.put("meat", selectedMeats);
-                            updateSelectedItemsText();
+//                            updateSelectedItemsText();
                         }
                     }
                 }
@@ -177,27 +177,27 @@ public class RecipeActivity extends BaseActivity {
         if (text != null) text.setText(textResId);
     }
 
-    private void updateSelectedItemsText() {
-        StringBuilder sb = new StringBuilder();
-        int totalItems = 0;
-
-        // Count all selected items
-        for (ArrayList<String> items : selectedIngredients.values()) {
-            totalItems += items.size();
-        }
-
-        if (totalItems > 0) {
-            sb.append("Selected ingredients: ").append(totalItems);
-
-            // Make continue button visible
-            continueButton.setVisibility(View.VISIBLE);
-        } else {
-            sb.append("No ingredients selected");
-
-            // Hide continue button
-            continueButton.setVisibility(View.GONE);
-        }
-
-        selectedItemsText.setText(sb.toString());
-    }
+//    private void updateSelectedItemsText() {
+//        StringBuilder sb = new StringBuilder();
+//        int totalItems = 0;
+//
+//        // Count all selected items
+//        for (ArrayList<String> items : selectedIngredients.values()) {
+//            totalItems += items.size();
+//        }
+//
+//        if (totalItems > 0) {
+//            sb.append("Selected ingredients: ").append(totalItems);
+//
+//            // Make continue button visible
+//            continueButton.setVisibility(View.VISIBLE);
+//        } else {
+//            sb.append("No ingredients selected");
+//
+//            // Hide continue button
+//            continueButton.setVisibility(View.GONE);
+//        }
+//
+//        selectedItemsText.setText(sb.toString());
+//    }
 }
