@@ -8,25 +8,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.VegetableViewHolder> {
 
-    private List<VegetableItem> vegetableItems;
+    private List<VegetableItem> items;
     private Context context;
-    private ArrayList<String> selectedVegetables;
+    private ArrayList<String> selectedItems;
 
-    public VegetableAdapter(List<VegetableItem> vegetableItems, Context context, ArrayList<String> selectedVegetables) {
-        this.vegetableItems = vegetableItems;
+    public VegetableAdapter(List<VegetableItem> items, Context context, ArrayList<String> selectedItems) {
+        this.items = items;
         this.context = context;
-        this.selectedVegetables = selectedVegetables;
+        this.selectedItems = selectedItems;
 
-        // Mark items as selected if they are in the selectedVegetables list
-        for (VegetableItem item : vegetableItems) {
-            if (selectedVegetables.contains(item.getName())) {
+        // Restore selection state
+        for (VegetableItem item : items) {
+            if (selectedItems.contains(item.getName())) {
                 item.setSelected(true);
             }
         }
@@ -35,66 +35,66 @@ public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.Vege
     @NonNull
     @Override
     public VegetableViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_vegetable, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_vegetable, parent, false);
         return new VegetableViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull VegetableViewHolder holder, int position) {
-        VegetableItem item = vegetableItems.get(position);
+        VegetableItem item = items.get(position);
 
         holder.vegetableName.setText(item.getName());
-        holder.vegetableIcon.setImageResource(item.getIconResource());
 
-        // Set the selection state
+        // Load image using Glide
+        Glide.with(context)
+                .load(item.getImageUrl())
+                .placeholder(R.drawable.placeholder_image) // Optional: Show placeholder while loading
+                .error(R.drawable.error_image)           // Optional: Show error image if loading fails
+                .into(holder.vegetableImage);
+
         updateSelectionState(holder, item.isSelected());
 
-        holder.itemCard.setOnClickListener(v -> {
-            // Toggle selection
-            boolean isCurrentlySelected = item.isSelected();
-            item.setSelected(!isCurrentlySelected);
+        holder.itemView.setOnClickListener(v -> {
+            boolean currentlySelected = item.isSelected();
+            item.setSelected(!currentlySelected);
 
-            // Update the selectedVegetables list
             if (item.isSelected()) {
-                if (!selectedVegetables.contains(item.getName())) {
-                    selectedVegetables.add(item.getName());
+                if (!selectedItems.contains(item.getName())) {
+                    selectedItems.add(item.getName());
                 }
             } else {
-                selectedVegetables.remove(item.getName());
+                selectedItems.remove(item.getName());
             }
 
-            // Update the visual state
             updateSelectionState(holder, item.isSelected());
         });
     }
 
     private void updateSelectionState(VegetableViewHolder holder, boolean isSelected) {
         if (isSelected) {
-            // Selected state
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.blue));
-            holder.vegetableName.setTextColor(ContextCompat.getColor(context, R.color.white));
+            holder.itemCard.setCardBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));
+            holder.vegetableName.setTextColor(context.getResources().getColor(android.R.color.white));
         } else {
-            // Unselected state
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
-            holder.vegetableName.setTextColor(ContextCompat.getColor(context, R.color.black));
+            holder.itemCard.setCardBackgroundColor(context.getResources().getColor(android.R.color.white));
+            holder.vegetableName.setTextColor(context.getResources().getColor(android.R.color.black));
         }
     }
 
     @Override
     public int getItemCount() {
-        return vegetableItems.size();
+        return items.size();
     }
 
     public static class VegetableViewHolder extends RecyclerView.ViewHolder {
         CardView itemCard;
-        ImageView vegetableIcon;
         TextView vegetableName;
+        ImageView vegetableImage; // New field for image view
 
         public VegetableViewHolder(@NonNull View itemView) {
             super(itemView);
             itemCard = itemView.findViewById(R.id.vegetable_item_card);
-            vegetableIcon = itemView.findViewById(R.id.vegetable_icon);
             vegetableName = itemView.findViewById(R.id.vegetable_name);
+            vegetableImage = itemView.findViewById(R.id.vegetable_image); // New image view
         }
     }
 }

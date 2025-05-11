@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeChooseVegetable">
+    android:layout_marginTop="80dp">
 
-    <!-- Back Button Icon -->
+    <!-- Back Button -->
     <ImageView
         android:id="@+id/back_button_recipe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="@string/back_button_vegetable"
+        android:contentDescription="@string/back_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/recipe_back_btn" />
 
-    <!-- "Vegetable" Title -->
+    <!-- Title -->
     <TextView
         android:id="@+id/vegetable_title_head"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="@font/poppins_medium"
-        android:text="@string/vegetables"
+        android:text="Vegetables"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/back_button_recipe"
         app:layout_constraintStart_toEndOf="@+id/back_button_recipe"
         app:layout_constraintTop_toTopOf="@+id/back_button_recipe" />
 
-    <!-- Select Vegetables Text -->
+    <!-- Instruction Text -->
     <TextView
         android:id="@+id/select_vegetables_text"
         android:layout_width="wrap_content"
@@ -41,7 +42,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="@string/select_vegetables"
+        android:text="Select Vegetables"
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,14 +57,14 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/poppins_regular"
-        android:text="@string/tap_on_vegetables_to_select_them_for_your_recipe"
+        android:text="Tap on vegetables to select them for your recipe"
         android:textColor="@color/black"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_vegetables_text" />
 
-    <!-- Vegetables RecyclerView -->
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/vegetables_recycler_view"
         android:layout_width="0dp"
@@ -88,7 +89,7 @@
         android:layout_marginBottom="24dp"
         android:background="@drawable/rounded_button_bg"
         android:fontFamily="@font/poppins_medium"
-        android:text="@string/confirm_selection"
+        android:text="Confirm Selection"
         android:textAllCaps="false"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

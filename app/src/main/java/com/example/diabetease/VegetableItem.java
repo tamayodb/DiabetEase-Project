@@ -2,12 +2,12 @@ package com.example.diabetease;
 
 public class VegetableItem {
     private String name;
-    private int iconResource;
+    private String imageUrl; // New field for image URL
     private boolean isSelected;
 
-    public VegetableItem(String name, int iconResource) {
+    public VegetableItem(String name, String imageUrl) {
         this.name = name;
-        this.iconResource = iconResource;
+        this.imageUrl = imageUrl;
         this.isSelected = false;
     }
 
@@ -15,8 +15,8 @@ public class VegetableItem {
         return name;
     }
 
-    public int getIconResource() {
-        return iconResource;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public boolean isSelected() {

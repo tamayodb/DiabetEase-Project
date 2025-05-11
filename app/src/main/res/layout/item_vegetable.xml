@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/vegetable_item_card"
     android:layout_width="100dp"
@@ -11,28 +12,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="8dp">
 
+        <!-- Vegetable Image -->
         <ImageView
-            android:id="@+id/vegetable_icon"
+            android:id="@+id/vegetable_image"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:contentDescription="@string/vegetable_icon"
-            android:padding="8dp"
-            android:src="@drawable/ic_carrot" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_image" />
 
+        <!-- Vegetable Name -->
         <TextView
             android:id="@+id/vegetable_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:fontFamily="@font/poppins_regular"
-            android:text="@string/carrot"
-            android:textAlignment="center"
+            android:textSize="12sp"
             android:textColor="@color/black"
-            android:textSize="12sp" />
+            android:textAlignment="center"
+            android:fontFamily="@font/poppins_regular" />
 
     </LinearLayout>
 
