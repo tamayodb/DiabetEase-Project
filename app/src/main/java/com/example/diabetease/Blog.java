@@ -1,7 +1,6 @@
 package com.example.diabetease;
 
 import java.util.List;
-import com.google.firebase.Timestamp;
 
 public class Blog {
     private String author;

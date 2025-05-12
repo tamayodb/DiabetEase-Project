@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:backgroundTint="@color/white">
 
-    <!-- Top Menu Bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topMenu"
         android:layout_width="0dp"
@@ -42,16 +41,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Search Bar (Initially Hidden) -->
+        <EditText
+            android:id="@+id/searchBar"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:background="@drawable/search_bar_background"
+            android:hint="Search..."
+            android:drawablePadding="8dp"
+            android:paddingHorizontal="12dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
         <!-- Search Icon (right) -->
         <ImageView
             android:id="@+id/search"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/search"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <!-- Main Content Area -->
     <LinearLayout
