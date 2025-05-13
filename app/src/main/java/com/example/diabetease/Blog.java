@@ -3,6 +3,7 @@ package com.example.diabetease;
 import java.util.List;
 
 public class Blog {
+    private String id;
     private String author;
     private String category;
     private String content;
@@ -19,6 +20,8 @@ public class Blog {
     public Blog() {}
 
     // Getters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
     public String getAuthor() { return author; }
     public String getCategory() { return category; }
     public String getContent() { return content; }
