@@ -29,6 +29,12 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
         this.isVertical = isVertical;
     }
 
+    public void setBlogs(List<Blog> newBlogs) {
+        this.blogList = newBlogs;
+        notifyDataSetChanged();
+    }
+
+
     @Override
     public int getItemViewType(int position) {
         return isVertical ? VIEW_TYPE_VERTICAL : VIEW_TYPE_HORIZONTAL;
@@ -45,6 +51,7 @@ public class BlogAdapter extends RecyclerView.Adapter<BlogAdapter.BlogViewHolder
         }
         return new BlogViewHolder(view, viewType);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull BlogViewHolder holder, int position) {
