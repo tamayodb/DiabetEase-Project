@@ -12,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.cardview.widget.CardView;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,7 +25,6 @@ public class RecipeActivity extends BaseActivity {
 
     private CardView fruitButton, vegetableButton, meatButton;
     private Button continueButton;
-    private TextView selectedItemsText;
 
     // Store selected ingredients by category
     private Map<String, ArrayList<String>> selectedIngredients;
@@ -37,7 +37,6 @@ public class RecipeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe);
 
@@ -61,7 +60,6 @@ public class RecipeActivity extends BaseActivity {
         vegetableButton = findViewById(R.id.vegetable_button);
         meatButton = findViewById(R.id.meat_button);
         continueButton = findViewById(R.id.continue_button);
-//        selectedItemsText = findViewById(R.id.selected_items_text);
 
         // Set up result launchers
         setupResultLaunchers();
@@ -73,13 +71,10 @@ public class RecipeActivity extends BaseActivity {
 
         // Set up button click listeners
         setupButtonListeners();
-
-        // Update the selected items text
-//        updateSelectedItemsText();
     }
 
     private void setupResultLaunchers() {
-        // Set up launcher for fruit selection
+        // Fruit launcher
         fruitSelectionLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -87,13 +82,12 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedFruits = result.getData().getStringArrayListExtra("selected_fruits");
                         if (selectedFruits != null) {
                             selectedIngredients.put("fruits", selectedFruits);
-//                            updateSelectedItemsText();
                         }
                     }
                 }
         );
 
-        // Set up launcher for vegetable selection
+        // Vegetable launcher
         vegetableSelectionLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -101,13 +95,12 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedVegetables = result.getData().getStringArrayListExtra("selected_vegetables");
                         if (selectedVegetables != null) {
                             selectedIngredients.put("vegetables", selectedVegetables);
-//                            updateSelectedItemsText();
                         }
                     }
                 }
         );
 
-        // Set up launcher for meat selection
+        // Meat launcher
         meatSelectionLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -115,7 +108,6 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedMeats = result.getData().getStringArrayListExtra("selected_meats");
                         if (selectedMeats != null) {
                             selectedIngredients.put("meat", selectedMeats);
-//                            updateSelectedItemsText();
                         }
                     }
                 }
@@ -125,27 +117,23 @@ public class RecipeActivity extends BaseActivity {
     private void setupButtonListeners() {
         fruitButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseFruit.class);
-            // Pass currently selected fruits if any
             intent.putStringArrayListExtra("selected_fruits", selectedIngredients.get("fruits"));
             fruitSelectionLauncher.launch(intent);
         });
 
         vegetableButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseVegetable.class);
-            // Pass currently selected vegetables if any
             intent.putStringArrayListExtra("selected_vegetables", selectedIngredients.get("vegetables"));
             vegetableSelectionLauncher.launch(intent);
         });
 
         meatButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseMeat.class);
-            // Pass currently selected meats if any
             intent.putStringArrayListExtra("selected_meats", selectedIngredients.get("meat"));
             meatSelectionLauncher.launch(intent);
         });
 
         continueButton.setOnClickListener(view -> {
-            // Check if at least one ingredient is selected
             boolean hasIngredients = false;
             for (ArrayList<String> items : selectedIngredients.values()) {
                 if (!items.isEmpty()) {
@@ -159,12 +147,11 @@ public class RecipeActivity extends BaseActivity {
                 return;
             }
 
-            // Navigate to the next screen with selected ingredients
             Intent intent = new Intent(this, RecipeResultActivity.class);
-            // Pass all selected ingredients
             for (Map.Entry<String, ArrayList<String>> entry : selectedIngredients.entrySet()) {
                 intent.putStringArrayListExtra("selected_" + entry.getKey(), entry.getValue());
             }
+
             startActivity(intent);
         });
     }
@@ -172,32 +159,7 @@ public class RecipeActivity extends BaseActivity {
     private void setupCustomButton(CardView button, int iconResId, int textResId) {
         ImageView icon = button.findViewById(R.id.button_icon);
         TextView text = button.findViewById(R.id.button_text);
-
         if (icon != null) icon.setImageResource(iconResId);
         if (text != null) text.setText(textResId);
     }
-
-//    private void updateSelectedItemsText() {
-//        StringBuilder sb = new StringBuilder();
-//        int totalItems = 0;
-//
-//        // Count all selected items
-//        for (ArrayList<String> items : selectedIngredients.values()) {
-//            totalItems += items.size();
-//        }
-//
-//        if (totalItems > 0) {
-//            sb.append("Selected ingredients: ").append(totalItems);
-//
-//            // Make continue button visible
-//            continueButton.setVisibility(View.VISIBLE);
-//        } else {
-//            sb.append("No ingredients selected");
-//
-//            // Hide continue button
-//            continueButton.setVisibility(View.GONE);
-//        }
-//
-//        selectedItemsText.setText(sb.toString());
-//    }
 }

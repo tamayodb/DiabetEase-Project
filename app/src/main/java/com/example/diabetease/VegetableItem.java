@@ -5,10 +5,13 @@ public class VegetableItem {
     private String imageUrl; // New field for image URL
     private boolean isSelected;
 
-    public VegetableItem(String name, String imageUrl) {
+    private String documentId;
+
+    public VegetableItem(String name, String imageUrl, String documentId) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.isSelected = false;
+        this.documentId = documentId;
     }
 
     public String getName() {
@@ -21,6 +24,10 @@ public class VegetableItem {
 
     public boolean isSelected() {
         return isSelected;
+    }
+
+    public String getDocumentId() {
+        return documentId;
     }
 
     public void setSelected(boolean selected) {

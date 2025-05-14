@@ -11,8 +11,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +45,6 @@ public class RecipeChooseVegetable extends AppCompatActivity {
         }
 
         setupRecyclerView();
-
         loadVegetablesFromFirebase();
 
         // Back button
@@ -79,8 +80,10 @@ public class RecipeChooseVegetable extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String name = document.getString("name");
                         String imageUrl = document.getString("ingred_image_url");
+                        String docId = document.getId(); // 🔥 Get document ID here
+
                         if (name != null && !name.isEmpty() && imageUrl != null && !imageUrl.isEmpty()) {
-                            vegetableList.add(new VegetableItem(name, imageUrl));
+                            vegetableList.add(new VegetableItem(name, imageUrl, docId)); // Pass ID
                         }
                     }
                     Log.d(TAG, "Loaded " + vegetableList.size() + " vegetables from Firebase");

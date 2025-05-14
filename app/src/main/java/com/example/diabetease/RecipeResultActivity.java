@@ -10,6 +10,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class RecipeResultActivity extends BaseActivity {
@@ -62,7 +65,7 @@ public class RecipeResultActivity extends BaseActivity {
     private void displaySelectedIngredients(ArrayList<String> fruits, ArrayList<String> vegetables, ArrayList<String> meats) {
         StringBuilder sb = new StringBuilder();
 
-        // Add fruits
+        // Fruits
         if (fruits != null && !fruits.isEmpty()) {
             sb.append("Fruits:\n");
             for (String fruit : fruits) {
@@ -71,7 +74,7 @@ public class RecipeResultActivity extends BaseActivity {
             sb.append("\n");
         }
 
-        // Add vegetables
+        // Vegetables
         if (vegetables != null && !vegetables.isEmpty()) {
             sb.append("Vegetables:\n");
             for (String vegetable : vegetables) {
@@ -80,7 +83,7 @@ public class RecipeResultActivity extends BaseActivity {
             sb.append("\n");
         }
 
-        // Add meats
+        // Meats
         if (meats != null && !meats.isEmpty()) {
             sb.append("Proteins:\n");
             for (String meat : meats) {
@@ -89,6 +92,26 @@ public class RecipeResultActivity extends BaseActivity {
         }
 
         ingredientsList.setText(sb.toString());
+    }
+
+    private void processCategory(StringBuilder sb, String categoryTitle, ArrayList<String> ids, CollectionReference ref, String extraKey) {
+        if (ids == null || ids.isEmpty()) return;
+
+        sb.append(categoryTitle).append(":\n");
+
+        for (String id : ids) {
+            ref.document(id).get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String name = documentSnapshot.getString("name");
+                    sb.append("• ").append(id).append(" (").append(name).append(")\n");
+
+                    // Update UI after all data is fetched
+                    ingredientsList.post(() -> ingredientsList.setText(sb.toString()));
+                }
+            });
+        }
+
+        sb.append("\n");
     }
 
     private void generateRecipe(ArrayList<String> fruits, ArrayList<String> vegetables, ArrayList<String> meats) {

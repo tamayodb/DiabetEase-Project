@@ -6,28 +6,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MeatAdapter extends RecyclerView.Adapter<MeatAdapter.MeatViewHolder> {
 
-    private List<MeatItem> meatItems;
+    private List<MeatItem> items;
     private Context context;
-    private ArrayList<String> selectedMeats;
+    private ArrayList<String> selectedItems;
 
-    public MeatAdapter(List<MeatItem> meatItems, Context context, ArrayList<String> selectedMeats) {
-        this.meatItems = meatItems;
+    public MeatAdapter(List<MeatItem> items, Context context, ArrayList<String> selectedItems) {
+        this.items = items;
         this.context = context;
-        this.selectedMeats = selectedMeats;
+        this.selectedItems = selectedItems;
 
-        for (MeatItem item : meatItems) {
-            if (selectedMeats.contains(item.getName())) {
-                item.setSelected(true);
-            }
+        // Restore selection state from previous selections
+        for (MeatItem item : items) {
+            item.setSelected(selectedItems.contains(item.getDocumentId()));
         }
     }
 
@@ -40,22 +42,29 @@ public class MeatAdapter extends RecyclerView.Adapter<MeatAdapter.MeatViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MeatViewHolder holder, int position) {
-        MeatItem item = meatItems.get(position);
+        MeatItem item = items.get(position);
+
         holder.meatName.setText(item.getName());
-        holder.meatIcon.setImageResource(item.getIconResource());
+
+        // Load image using Glide
+        Glide.with(context)
+                .load(item.getImageUrl())
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.error_image)
+                .into(holder.meatImage);
 
         updateSelectionState(holder, item.isSelected());
 
-        holder.itemCard.setOnClickListener(v -> {
-            boolean isCurrentlySelected = item.isSelected();
-            item.setSelected(!isCurrentlySelected);
+        holder.itemView.setOnClickListener(v -> {
+            boolean currentlySelected = item.isSelected();
+            item.setSelected(!currentlySelected);
 
             if (item.isSelected()) {
-                if (!selectedMeats.contains(item.getName())) {
-                    selectedMeats.add(item.getName());
+                if (!selectedItems.contains(item.getDocumentId())) {
+                    selectedItems.add(item.getDocumentId());
                 }
             } else {
-                selectedMeats.remove(item.getName());
+                selectedItems.remove(item.getDocumentId());
             }
 
             updateSelectionState(holder, item.isSelected());
@@ -65,28 +74,28 @@ public class MeatAdapter extends RecyclerView.Adapter<MeatAdapter.MeatViewHolder
     private void updateSelectionState(MeatViewHolder holder, boolean isSelected) {
         if (isSelected) {
             holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.blue));
-            holder.meatName.setTextColor(ContextCompat.getColor(context, R.color.white));
+            holder.meatName.setTextColor(ContextCompat.getColor(context, android.R.color.white));
         } else {
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
-            holder.meatName.setTextColor(ContextCompat.getColor(context, R.color.black));
+            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
+            holder.meatName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
         }
     }
 
     @Override
     public int getItemCount() {
-        return meatItems.size();
+        return items.size();
     }
 
     public static class MeatViewHolder extends RecyclerView.ViewHolder {
         CardView itemCard;
-        ImageView meatIcon;
         TextView meatName;
+        ImageView meatImage;
 
         public MeatViewHolder(@NonNull View itemView) {
             super(itemView);
             itemCard = itemView.findViewById(R.id.meat_item_card);
-            meatIcon = itemView.findViewById(R.id.meat_icon);
             meatName = itemView.findViewById(R.id.meat_name);
+            meatImage = itemView.findViewById(R.id.meat_icon);
         }
     }
 }

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import java.util.ArrayList;
@@ -26,9 +27,7 @@ public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.Vege
 
         // Restore selection state
         for (VegetableItem item : items) {
-            if (selectedItems.contains(item.getName())) {
-                item.setSelected(true);
-            }
+            item.setSelected(selectedItems.contains(item.getDocumentId()));
         }
     }
 
@@ -42,14 +41,12 @@ public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.Vege
     @Override
     public void onBindViewHolder(@NonNull VegetableViewHolder holder, int position) {
         VegetableItem item = items.get(position);
-
         holder.vegetableName.setText(item.getName());
 
-        // Load image using Glide
         Glide.with(context)
                 .load(item.getImageUrl())
-                .placeholder(R.drawable.placeholder_image) // Optional: Show placeholder while loading
-                .error(R.drawable.error_image)           // Optional: Show error image if loading fails
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.error_image)
                 .into(holder.vegetableImage);
 
         updateSelectionState(holder, item.isSelected());
@@ -59,11 +56,11 @@ public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.Vege
             item.setSelected(!currentlySelected);
 
             if (item.isSelected()) {
-                if (!selectedItems.contains(item.getName())) {
-                    selectedItems.add(item.getName());
+                if (!selectedItems.contains(item.getDocumentId())) {
+                    selectedItems.add(item.getDocumentId());
                 }
             } else {
-                selectedItems.remove(item.getName());
+                selectedItems.remove(item.getDocumentId());
             }
 
             updateSelectionState(holder, item.isSelected());
@@ -72,11 +69,11 @@ public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.Vege
 
     private void updateSelectionState(VegetableViewHolder holder, boolean isSelected) {
         if (isSelected) {
-            holder.itemCard.setCardBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_light));
-            holder.vegetableName.setTextColor(context.getResources().getColor(android.R.color.white));
+            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.blue));
+            holder.vegetableName.setTextColor(ContextCompat.getColor(context, android.R.color.white));
         } else {
-            holder.itemCard.setCardBackgroundColor(context.getResources().getColor(android.R.color.white));
-            holder.vegetableName.setTextColor(context.getResources().getColor(android.R.color.black));
+            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
+            holder.vegetableName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
         }
     }
 
@@ -88,13 +85,13 @@ public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.Vege
     public static class VegetableViewHolder extends RecyclerView.ViewHolder {
         CardView itemCard;
         TextView vegetableName;
-        ImageView vegetableImage; // New field for image view
+        ImageView vegetableImage;
 
         public VegetableViewHolder(@NonNull View itemView) {
             super(itemView);
             itemCard = itemView.findViewById(R.id.vegetable_item_card);
             vegetableName = itemView.findViewById(R.id.vegetable_name);
-            vegetableImage = itemView.findViewById(R.id.vegetable_image); // New image view
+            vegetableImage = itemView.findViewById(R.id.vegetable_image);
         }
     }
 }
