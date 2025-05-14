@@ -129,13 +129,17 @@
 
     <Button
         android:id="@+id/continue_button"
-        android:layout_width="wrap_content"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:background="@drawable/button_recipe_con"
+        android:text="Generate Food Recipe"
+        android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView23" />
+        app:layout_constraintTop_toBottomOf="@+id/textView23"
+        app:layout_constraintVertical_bias="0.64" />
 
 <!--    <TextView-->
 <!--        android:id="@+id/selected_items_text"-->

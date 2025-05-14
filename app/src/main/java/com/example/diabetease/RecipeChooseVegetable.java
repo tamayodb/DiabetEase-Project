@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +39,7 @@ public class RecipeChooseVegetable extends AppCompatActivity {
         selectedVegetables = new ArrayList<>();
         vegetableList = new ArrayList<>();
 
+        // Get previously selected vegetables (if returning from result)
         if (getIntent().hasExtra("selected_vegetables")) {
             selectedVegetables = getIntent().getStringArrayListExtra("selected_vegetables");
         }
@@ -47,16 +47,11 @@ public class RecipeChooseVegetable extends AppCompatActivity {
         setupRecyclerView();
         loadVegetablesFromFirebase();
 
-        // Back button
+        // Back button click
         backButton.setOnClickListener(v -> finish());
 
-        // Confirm button
+        // Confirm button click
         confirmButton.setOnClickListener(v -> {
-            if (selectedVegetables.isEmpty()) {
-                Toast.makeText(this, "Please select at least one vegetable", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             Intent resultIntent = new Intent();
             resultIntent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
             setResult(RESULT_OK, resultIntent);
@@ -80,13 +75,21 @@ public class RecipeChooseVegetable extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String name = document.getString("name");
                         String imageUrl = document.getString("ingred_image_url");
-                        String docId = document.getId(); // 🔥 Get document ID here
+                        String docId = document.getId(); // 🔥 Get document ID
 
                         if (name != null && !name.isEmpty() && imageUrl != null && !imageUrl.isEmpty()) {
-                            vegetableList.add(new VegetableItem(name, imageUrl, docId)); // Pass ID
+                            VegetableItem item = new VegetableItem(name, imageUrl, docId); // Pass ID
+                            vegetableList.add(item);
                         }
                     }
-                    Log.d(TAG, "Loaded " + vegetableList.size() + " vegetables from Firebase");
+
+                    // Restore selection state
+                    for (int i = 0; i < vegetableList.size(); i++) {
+                        if (selectedVegetables.contains(vegetableList.get(i).getDocumentId())) {
+                            vegetableList.get(i).setSelected(true);
+                        }
+                    }
+
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {

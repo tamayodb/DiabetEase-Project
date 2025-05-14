@@ -32,14 +32,13 @@ public class RecipeChooseMeat extends AppCompatActivity {
 
         Log.d(TAG, "Starting RecipeChooseMeat");
 
-        ImageView backButton = findViewById(R.id.back_button_recipe_meat);
+        ImageView backButton = findViewById(R.id.back_button_recipe);
         Button confirmButton = findViewById(R.id.confirm_meats_button);
         recyclerView = findViewById(R.id.meats_recycler_view);
 
         selectedMeats = new ArrayList<>();
         meatList = new ArrayList<>();
 
-        // Get previously selected meats
         if (getIntent().hasExtra("selected_meats")) {
             selectedMeats = getIntent().getStringArrayListExtra("selected_meats");
         }
@@ -48,16 +47,11 @@ public class RecipeChooseMeat extends AppCompatActivity {
 
         loadMeatsFromFirebase();
 
-        // Back button
+        // Back button click
         backButton.setOnClickListener(v -> finish());
 
-        // Confirm button
+        // Confirm button click
         confirmButton.setOnClickListener(v -> {
-            if (selectedMeats.isEmpty()) {
-                Toast.makeText(this, "Please select at least one protein", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             Intent resultIntent = new Intent();
             resultIntent.putStringArrayListExtra("selected_meats", selectedMeats);
             setResult(RESULT_OK, resultIntent);
@@ -87,6 +81,14 @@ public class RecipeChooseMeat extends AppCompatActivity {
                             meatList.add(new MeatItem(name, imageUrl, docId)); // Pass document ID
                         }
                     }
+
+                    // Restore previous selections
+                    for (int i = 0; i < meatList.size(); i++) {
+                        if (selectedMeats.contains(meatList.get(i).getDocumentId())) {
+                            meatList.get(i).setSelected(true);
+                        }
+                    }
+
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {

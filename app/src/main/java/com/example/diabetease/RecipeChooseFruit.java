@@ -32,14 +32,13 @@ public class RecipeChooseFruit extends AppCompatActivity {
 
         Log.d(TAG, "Starting RecipeChooseFruit");
 
-        ImageView backButton = findViewById(R.id.back_button_recipe_fruit);
+        ImageView backButton = findViewById(R.id.back_button_recipe);
         Button confirmButton = findViewById(R.id.confirm_fruits_button);
         recyclerView = findViewById(R.id.fruits_recycler_view);
 
         selectedFruits = new ArrayList<>();
         fruitList = new ArrayList<>();
 
-        // Get previously selected fruits
         if (getIntent().hasExtra("selected_fruits")) {
             selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");
         }
@@ -48,16 +47,11 @@ public class RecipeChooseFruit extends AppCompatActivity {
 
         loadFruitsFromFirebase();
 
-        // Back button
+        // Back button click
         backButton.setOnClickListener(v -> finish());
 
-        // Confirm button
+        // Confirm button click
         confirmButton.setOnClickListener(v -> {
-            if (selectedFruits.isEmpty()) {
-                Toast.makeText(this, "Please select at least one fruit", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             Intent resultIntent = new Intent();
             resultIntent.putStringArrayListExtra("selected_fruits", selectedFruits);
             setResult(RESULT_OK, resultIntent);
@@ -81,12 +75,20 @@ public class RecipeChooseFruit extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String name = document.getString("name");
                         String imageUrl = document.getString("ingred_image_url");
-                        String docId = document.getId(); // 🔥 Document ID
+                        String docId = document.getId(); // 🔥 Get document ID
 
                         if (name != null && !name.isEmpty() && imageUrl != null && !imageUrl.isEmpty()) {
-                            fruitList.add(new FruitItem(name, imageUrl, docId)); // Pass document ID
+                            fruitList.add(new FruitItem(name, imageUrl, docId)); // Pass ID
                         }
                     }
+
+                    // Restore selection state
+                    for (int i = 0; i < fruitList.size(); i++) {
+                        if (selectedFruits.contains(fruitList.get(i).getDocumentId())) {
+                            fruitList.get(i).setSelected(true);
+                        }
+                    }
+
                     adapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {

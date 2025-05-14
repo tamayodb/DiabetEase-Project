@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RecipeChooseFruit">
+    android:layout_height="match_parent">
 
     <!-- Back Button -->
     <ImageView
-        android:id="@+id/back_button_recipe_fruit"
+        android:id="@+id/back_button_recipe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="@string/back_button_recipe_fruit"
+        android:contentDescription="@string/back_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/recipe_back_btn" />
@@ -26,14 +26,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:fontFamily="@font/poppins_medium"
-        android:text="@string/fruits"
+        android:text="Fruits"
         android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/back_button_recipe_fruit"
-        app:layout_constraintStart_toEndOf="@+id/back_button_recipe_fruit"
-        app:layout_constraintTop_toTopOf="@+id/back_button_recipe_fruit" />
+        app:layout_constraintBottom_toBottomOf="@+id/back_button_recipe"
+        app:layout_constraintStart_toEndOf="@+id/back_button_recipe"
+        app:layout_constraintTop_toTopOf="@+id/back_button_recipe" />
 
-    <!-- Select Fruits Text -->
+    <!-- Instruction Text -->
     <TextView
         android:id="@+id/select_fruits_text"
         android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back_button_recipe_fruit" />
+        app:layout_constraintTop_toBottomOf="@+id/back_button_recipe" />
 
     <!-- Help Text -->
     <TextView
@@ -56,14 +56,14 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/poppins_regular"
-        android:text="@string/tap_on_fruits_to_select_them_for_your_recipe"
+        android:text="Tap on fruits to select them for your recipe"
         android:textColor="@color/black"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_fruits_text" />
 
-    <!-- Fruits RecyclerView -->
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fruits_recycler_view"
         android:layout_width="0dp"
@@ -83,12 +83,12 @@
         android:id="@+id/confirm_fruits_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/rounded_button_bg"
         android:fontFamily="@font/poppins_medium"
-        android:text="@string/confirm_selection"
+        android:text="Confirm Selection"
         android:textAllCaps="false"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
