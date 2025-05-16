@@ -127,13 +127,16 @@
             android:layout_height="wrap_content" />
     </FrameLayout>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/continue_button"
-        android:layout_width="350dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:background="@drawable/button_recipe_con"
         android:text="Generate Food Recipe"
         android:textStyle="normal"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
