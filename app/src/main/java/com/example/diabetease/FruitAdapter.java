@@ -73,11 +73,11 @@ public class FruitAdapter extends RecyclerView.Adapter<FruitAdapter.FruitViewHol
 
     private void updateSelectionState(FruitViewHolder holder, boolean isSelected) {
         if (isSelected) {
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.blue));
-            holder.fruitName.setTextColor(ContextCompat.getColor(context, android.R.color.white));
+            holder.itemCard.setBackground(ContextCompat.getDrawable(context, R.drawable.item_border_selected));
+            holder.fruitName.setTextColor(ContextCompat.getColor(context, R.color.blue));
         } else {
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            holder.fruitName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+            holder.itemCard.setBackground(ContextCompat.getDrawable(context, R.drawable.item_border_default));
+            holder.fruitName.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
     }
 

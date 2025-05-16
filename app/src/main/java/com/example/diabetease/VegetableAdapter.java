@@ -69,11 +69,11 @@ public class VegetableAdapter extends RecyclerView.Adapter<VegetableAdapter.Vege
 
     private void updateSelectionState(VegetableViewHolder holder, boolean isSelected) {
         if (isSelected) {
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.blue));
-            holder.vegetableName.setTextColor(ContextCompat.getColor(context, android.R.color.white));
+            holder.itemCard.setBackground(ContextCompat.getDrawable(context, R.drawable.item_border_selected));
+            holder.vegetableName.setTextColor(ContextCompat.getColor(context, R.color.blue));
         } else {
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            holder.vegetableName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+            holder.itemCard.setBackground(ContextCompat.getDrawable(context, R.drawable.item_border_default));
+            holder.vegetableName.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
     }
 

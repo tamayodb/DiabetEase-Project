@@ -73,11 +73,11 @@ public class MeatAdapter extends RecyclerView.Adapter<MeatAdapter.MeatViewHolder
 
     private void updateSelectionState(MeatViewHolder holder, boolean isSelected) {
         if (isSelected) {
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.blue));
-            holder.meatName.setTextColor(ContextCompat.getColor(context, android.R.color.white));
+            holder.itemCard.setBackground(ContextCompat.getDrawable(context, R.drawable.item_border_selected));
+            holder.meatName.setTextColor(ContextCompat.getColor(context, R.color.blue));
         } else {
-            holder.itemCard.setCardBackgroundColor(ContextCompat.getColor(context, android.R.color.white));
-            holder.meatName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+            holder.itemCard.setBackground(ContextCompat.getDrawable(context, R.drawable.item_border_default));
+            holder.meatName.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
     }
 
