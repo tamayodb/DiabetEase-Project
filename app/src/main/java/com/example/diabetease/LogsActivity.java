@@ -149,7 +149,7 @@ public class LogsActivity extends BaseActivity {
 
     private void showLogPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.log_card, null); // ✅ Use log_card.xml
+        View dialogView = getLayoutInflater().inflate(R.layout.log_card, null); 
 
         EditText gInput = dialogView.findViewById(R.id.ginput);
         Button insertButton = dialogView.findViewById(R.id.insert_button);
