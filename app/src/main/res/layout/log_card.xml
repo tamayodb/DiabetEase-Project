@@ -27,33 +27,31 @@
         app:layout_constraintStart_toStartOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view" />
 
-    <EditText
-        android:id="@+id/editTextNumber"
-        android:layout_width="285dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="20dp"
-        android:ems="10"
-        android:fontFamily="@font/poppins_bold"
-        android:hint="000"
-        android:inputType="number"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintHorizontal_bias="0.44"
-        app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/textView25" />
-
     <Button
         android:id="@+id/insert_button"
         android:layout_width="150sp"
         android:layout_height="40sp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="23dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="#0665F4"
         android:text="Done"
-        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber"
+        app:layout_constraintTop_toBottomOf="@+id/ginput"
         app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/ginput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:fontFamily="@font/poppins_extrabold"
+        android:hint="000.00"
+        android:inputType="numberDecimal"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

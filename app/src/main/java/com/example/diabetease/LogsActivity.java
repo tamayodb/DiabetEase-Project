@@ -1,8 +1,10 @@
 package com.example.diabetease;
 
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -21,8 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class LogsActivity extends BaseActivity {
 
@@ -58,13 +63,11 @@ public class LogsActivity extends BaseActivity {
 
         fetchGlucoseStats();
 
-        //Buttons
-        //logButton = findViewById(R.id.log_button);
+        //pop up
+        logButton = findViewById(R.id.log_button);
+        logButton.setOnClickListener(view -> showLogPopup());
 
-        //Open pop up log, listeners
-        //logButton.setOnClickListener(view -> {
-            //Intent intent = new Intent(this, .class)
-        //});
+
     }
 
     private void fetchGlucoseStats() {
@@ -132,16 +135,72 @@ public class LogsActivity extends BaseActivity {
             lowestNum.setText(String.format(Locale.getDefault(), "%.2f", min));
             highestNum.setText(String.format(Locale.getDefault(), "%.2f", max));
         } else {
-            averageNum.setText("000");
-            lowestNum.setText("000");
-            highestNum.setText("000");
+            averageNum.setText("---");
+            lowestNum.setText("---");
+            highestNum.setText("---");
         }
 
         if (yesterdayValue != null) {
             yesterdayNum.setText(String.format(Locale.getDefault(), "%.2f", yesterdayValue));
         } else {
-            yesterdayNum.setText("000");
+            yesterdayNum.setText("---");
         }
     }
+
+    private void showLogPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.log_card, null); // ✅ Use log_card.xml
+
+        EditText gInput = dialogView.findViewById(R.id.ginput);
+        Button insertButton = dialogView.findViewById(R.id.insert_button);
+
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        insertButton.setOnClickListener(v -> {
+            String inputText = gInput.getText().toString().trim();
+            if (!inputText.isEmpty()) {
+                double glucoseValue = Double.parseDouble(inputText);
+
+                insertGlucoseLog(glucoseValue);
+                dialog.dismiss();
+            } else {
+                Toast.makeText(this, "Please enter a glucose value", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void insertGlucoseLog(double value) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        String userId = user.getUid();
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        String status = "Normal";
+        if (value > 140) status = "High";
+        else if (value < 70) status = "Low";
+
+        Map<String, Object> log = new HashMap<>();
+        log.put("user_id", userId);
+        log.put("glucose_value", value);
+        log.put("glucose_status", status);
+        log.put("log_date", date);
+        log.put("log_time", time);
+
+        FirebaseFirestore.getInstance()
+                .collection("glucose_logs")
+                .add(log)
+                .addOnSuccessListener(docRef -> {
+                    Toast.makeText(this, "Log saved", Toast.LENGTH_SHORT).show();
+                    fetchGlucoseStats(); // Refresh stats on UI
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to save log", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 
 }
