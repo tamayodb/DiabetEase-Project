@@ -1,10 +1,11 @@
 package com.example.diabetease;
 
+import java.sql.Timestamp;
+
 public class Glucose {
     private String user_id;
     private double glucose_value;
-    private String log_date;
-    private String log_time;
+    private Timestamp timestamp;
     private String glucose_status;
 
     // Required empty constructor for Firestore
@@ -19,13 +20,7 @@ public class Glucose {
         return glucose_value;
     }
 
-    public String getLog_date() {
-        return log_date;
-    }
-
-    public String getLog_time() {
-        return log_time;
-    }
+    public Timestamp getTimestamp() { return timestamp; }
 
     public String getGlucose_status() {
         return glucose_status;
