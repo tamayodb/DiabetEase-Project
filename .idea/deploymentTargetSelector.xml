@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="DiabetEase.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-16T03:49:31.126631500Z">
+        <DropdownSelection timestamp="2025-05-16T17:23:44.434525800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\HP Probook 440 G7\.android\avd\Pixel_9.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=089092526L010612" />
             </handle>
           </Target>
         </DropdownSelection>
