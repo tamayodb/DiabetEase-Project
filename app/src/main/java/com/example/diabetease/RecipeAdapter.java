@@ -1,5 +1,7 @@
 package com.example.diabetease;
 
+import android.content.Context;
+import android.content.Intent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,16 +19,17 @@ import java.util.List;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
     private final List<Recipes> recipeList;
+    private final Context context;
 
-    public RecipeAdapter(List<Recipes> recipeList) {
+    public RecipeAdapter(Context context, List<Recipes> recipeList) {
+        this.context = context;
         this.recipeList = recipeList;
     }
 
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_recipe_card, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_recipe_card, parent, false);
         return new RecipeViewHolder(view);
     }
 
@@ -35,9 +38,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         Recipes recipe = recipeList.get(position);
         holder.recipeName.setText(recipe.getName());
 
-        Glide.with(holder.itemView.getContext())
-                .load(recipe.getImage_url())
-                .into(holder.recipeImage);
+        Glide.with(context).load(recipe.getImage_url()).into(holder.recipeImage);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, SpecificRecipeActivity.class);
+            intent.putExtra("recipe", recipe);
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -45,11 +52,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         return recipeList.size();
     }
 
-    public static class RecipeViewHolder extends RecyclerView.ViewHolder {
+    static class RecipeViewHolder extends RecyclerView.ViewHolder {
         ImageView recipeImage;
         TextView recipeName;
 
-        public RecipeViewHolder(@NonNull View itemView) {
+        RecipeViewHolder(View itemView) {
             super(itemView);
             recipeImage = itemView.findViewById(R.id.recipe_image);
             recipeName = itemView.findViewById(R.id.recipe_name);

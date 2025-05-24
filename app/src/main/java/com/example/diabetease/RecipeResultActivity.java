@@ -37,7 +37,7 @@ public class RecipeResultActivity extends BaseActivity {
 
         recyclerView = findViewById(R.id.recipe_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        adapter = new RecipeAdapter(matchedRecipes);
+        adapter = new RecipeAdapter(this, matchedRecipes);
         recyclerView.setAdapter(adapter);
 
         // Back button (if included in layout)
