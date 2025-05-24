@@ -47,4 +47,28 @@
     <string name="back_button_recipe_meat">back button recipe meat</string>
     <string name="back_button_vegetable">back button vegetable</string>
     <string name="back_button_recipe_fruit">back button recipe fruit</string>
+
+    <!-- Vegetable selection screen -->
+    <string name="select_vegetables">Select Vegetables</string>
+    <string name="tap_on_vegetables_to_select_them_for_your_recipe">Tap on vegetables to select them for your recipe</string>
+    <string name="vegetable_icon">Vegetable Icon</string>
+    <string name="carrot">Carrot</string>
+<!--    <string name="back_button_vegetable">Back Button</string>-->
+    <string name="confirm_selection">Confirm Selection</string>
+
+    <!-- Recipe screen -->
+    <string name="no_ingredients_selected">No ingredients selected</string>
+    <string name="continue_text">Continue</string>
+
+    <!-- Recipe result screen -->
+    <string name="recipe_result">Recipe Result</string>
+    <string name="back_button">Back Button</string>
+    <string name="recipe_title_placeholder">Recipe Title</string>
+    <string name="recipe_description_placeholder">Recipe instructions will appear here.</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="ingredients_list_placeholder">Selected ingredients will appear here.</string>
+    <string name="tap_on_fruits_to_select_them_for_your_recipe">Tap on fruits to select them for your Recipe</string>
+    <string name="tap_on_proteins_to_select_them_for_your_recipe">Tap on Meat/Proteins to select them for your Recipe</string>c
+
+
 </resources>
