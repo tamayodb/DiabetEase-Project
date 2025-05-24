@@ -21,8 +21,12 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -47,11 +51,11 @@ import java.util.TimeZone;
 
 public class LogsActivity extends BaseActivity {
 
-    private Button logButton;
+    private Button logButton, editLogButton;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
 
-    private TextView averageNum, yesterdayNum, lowestNum, highestNum, currentDayText;
+    private TextView averageNum, yesterdayNum, lowestNum, highestNum, currentDayText, loggedTodayTextView;
     private TextView weekRangeText;
     private ImageButton prevWeekButton, nextWeekButton;
 
@@ -86,14 +90,18 @@ public class LogsActivity extends BaseActivity {
         fetchGlucoseStats();
 
         logButton.setOnClickListener(view -> showLogPopup());
+
+        checkIfLoggedTodayAndToggleEditButton();
     }
 
     private void initializeViews() {
+        loggedTodayTextView = findViewById(R.id.logged_today);
         averageNum = findViewById(R.id.average_num);
         yesterdayNum = findViewById(R.id.yesterday_num);
         lowestNum = findViewById(R.id.lowest_num);
         highestNum = findViewById(R.id.highest_num);
         logButton = findViewById(R.id.log_button);
+        editLogButton = findViewById(R.id.edit_log);
         weekRangeText = findViewById(R.id.week_range_text);
         prevWeekButton = findViewById(R.id.prev_week_button);
         nextWeekButton = findViewById(R.id.next_week_button);
@@ -402,6 +410,50 @@ public class LogsActivity extends BaseActivity {
         prevWeekButton.setAlpha(prevWeekButton.isEnabled() ? 1.0f : 0.5f);
     }
 
+    private void checkIfLoggedTodayAndToggleEditButton() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        Button editLogButton = findViewById(R.id.edit_log);
+        editLogButton.setOnClickListener(v -> showEditLogPopup());
+        editLogButton.setVisibility(View.GONE); // Hide by default
+
+        // Get start and end of today
+        Calendar startCal = Calendar.getInstance();
+        startCal.set(Calendar.HOUR_OF_DAY, 0);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
+
+        Calendar endCal = Calendar.getInstance();
+        endCal.set(Calendar.HOUR_OF_DAY, 23);
+        endCal.set(Calendar.MINUTE, 59);
+        endCal.set(Calendar.SECOND, 59);
+        endCal.set(Calendar.MILLISECOND, 999);
+
+        Timestamp startOfDay = new Timestamp(startCal.getTime());
+        Timestamp endOfDay = new Timestamp(endCal.getTime());
+
+        db.collection("glucose_logs")
+                .whereEqualTo("user_id", userId)
+                .whereGreaterThanOrEqualTo("timestamp", startOfDay)
+                .whereLessThanOrEqualTo("timestamp", endOfDay)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        // Log exists for today, show the button
+                        editLogButton.setVisibility(View.VISIBLE);
+                    } else {
+                        // No log, keep hidden
+                        editLogButton.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Failed to check today's log: ", e);
+                    editLogButton.setVisibility(View.GONE);
+                });
+    }
+
     private void fetchGlucoseStats() {
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser == null) {
@@ -460,6 +512,91 @@ public class LogsActivity extends BaseActivity {
                 });
     }
 
+
+    private void showEditLogPopup() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Get start and end of today
+        Calendar startCal = Calendar.getInstance();
+        startCal.set(Calendar.HOUR_OF_DAY, 0);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
+
+        Calendar endCal = Calendar.getInstance();
+        endCal.set(Calendar.HOUR_OF_DAY, 23);
+        endCal.set(Calendar.MINUTE, 59);
+        endCal.set(Calendar.SECOND, 59);
+        endCal.set(Calendar.MILLISECOND, 999);
+
+        Timestamp startOfDay = new Timestamp(startCal.getTime());
+        Timestamp endOfDay = new Timestamp(endCal.getTime());
+
+        db.collection("glucose_logs")
+                .whereEqualTo("user_id", userId)
+                .whereGreaterThanOrEqualTo("timestamp", startOfDay)
+                .whereLessThanOrEqualTo("timestamp", endOfDay)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                        String docId = doc.getId();
+                        double glucoseValue = doc.getDouble("glucose_value");
+
+                        // Now show the dialog with the value pre-filled
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        View dialogView = getLayoutInflater().inflate(R.layout.log_card, null);
+
+                        EditText gInput = dialogView.findViewById(R.id.ginput);
+                        Button insertButton = dialogView.findViewById(R.id.insert_button);
+
+                        gInput.setText(String.valueOf(glucoseValue)); // pre-fill
+
+                        builder.setView(dialogView);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                        insertButton.setOnClickListener(v -> {
+                            String inputText = gInput.getText().toString().trim();
+                            if (!inputText.isEmpty()) {
+                                try {
+                                    double updatedValue = Double.parseDouble(inputText);
+                                    if (updatedValue > 0 && updatedValue <= 1000) {
+                                        Map<String, Object> updatedLog = new HashMap<>();
+                                        updatedLog.put("glucose_value", updatedValue);
+                                        updatedLog.put("timestamp", FieldValue.serverTimestamp());
+
+                                        db.collection("glucose_logs").document(docId)
+                                                .update(updatedLog)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Toast.makeText(this, "Log updated", Toast.LENGTH_SHORT).show();
+                                                    dialog.dismiss();
+                                                })
+                                                .addOnFailureListener(e ->
+                                                        Toast.makeText(this, "Failed to update", Toast.LENGTH_SHORT).show()
+                                                );
+                                    } else {
+                                        Toast.makeText(this, "Please enter 1–1000 mg/dL", Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (NumberFormatException e) {
+                                    Toast.makeText(this, "Invalid input", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(this, "Please enter a value", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(this, "No log to edit today", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error fetching log", Toast.LENGTH_SHORT).show()
+                );
+    }
+
+
     private void updateUI(List<Double> values, Double yesterdayValue) {
         if (!values.isEmpty()) {
             double sum = 0;
@@ -503,9 +640,60 @@ public class LogsActivity extends BaseActivity {
             if (!inputText.isEmpty()) {
                 try {
                     double glucoseValue = Double.parseDouble(inputText);
-                    if (glucoseValue > 0 && glucoseValue <= 1000) { // Reasonable range check
-                        insertGlucoseLog(glucoseValue);
-                        dialog.dismiss();
+                    if (glucoseValue > 0 && glucoseValue <= 1000) {
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        // Get today's start and end time
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(Calendar.MILLISECOND, 0);
+                        Timestamp startOfDay = new Timestamp(calendar.getTime());
+
+                        calendar.add(Calendar.DAY_OF_MONTH, 1);
+                        Timestamp endOfDay = new Timestamp(calendar.getTime());
+
+                        db.collection("glucose_logs")
+                                .whereEqualTo("user_id", userId)
+                                .whereGreaterThanOrEqualTo("timestamp", startOfDay)
+                                .whereLessThan("timestamp", endOfDay)
+                                .get()
+                                .addOnSuccessListener(querySnapshot -> {
+                                    if (!querySnapshot.isEmpty()) {
+                                        // Update existing log
+                                        DocumentSnapshot existingDoc = querySnapshot.getDocuments().get(0);
+                                        existingDoc.getReference().update("glucose_value", glucoseValue)
+                                                .addOnSuccessListener(unused -> {
+                                                    Toast.makeText(this, "Glucose log updated", Toast.LENGTH_SHORT).show();
+                                                    loggedTodayTextView.setText(String.format("%.2f", glucoseValue));
+                                                    logButton.setEnabled(false);
+                                                    logButton.setAlpha(0.5f);
+                                                    editLogButton.setEnabled(true);
+                                                    editLogButton.setAlpha(1f);
+                                                    dialog.dismiss();
+                                                });
+                                    } else {
+                                        // Insert new log
+                                        Map<String, Object> log = new HashMap<>();
+                                        log.put("user_id", userId);
+                                        log.put("glucose_value", glucoseValue);
+                                        log.put("timestamp", FieldValue.serverTimestamp());
+
+                                        db.collection("glucose_logs")
+                                                .add(log)
+                                                .addOnSuccessListener(documentReference -> {
+                                                    Toast.makeText(this, "Glucose log added", Toast.LENGTH_SHORT).show();
+                                                    loggedTodayTextView.setText(String.format("%.2f", glucoseValue));
+                                                    logButton.setEnabled(false);
+                                                    logButton.setAlpha(0.5f);
+                                                    editLogButton.setEnabled(true);
+                                                    editLogButton.setAlpha(1f);
+                                                    dialog.dismiss();
+                                                });
+                                    }
+                                });
                     } else {
                         Toast.makeText(this, "Please enter a value between 1 and 1000 mg/dL", Toast.LENGTH_SHORT).show();
                     }

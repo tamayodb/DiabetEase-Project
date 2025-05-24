@@ -75,6 +75,8 @@
         app:layout_constraintStart_toEndOf="@+id/today_button"
         app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
+    <!-- LinearLayout for Previous Week, Week Range, Next Week BELOW BarChart -->
+
     <TextView
         android:id="@+id/textView23"
         android:layout_width="wrap_content"
@@ -88,9 +90,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/logged_today"
         app:layout_constraintTop_toTopOf="@+id/logged_today"
-        app:layout_constraintVertical_bias="0.85" />
-
-    <!-- LinearLayout for Previous Week, Week Range, Next Week BELOW BarChart -->
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/log_button"
@@ -175,32 +175,19 @@
         app:srcCompat="@drawable/menu_icon" />
 
     <TextView
-        android:id="@+id/textView24"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="34dp"
-        android:fontFamily="@font/poppins_light"
-        android:text="Edit"
-        android:textColor="#458FFF"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/history_button" />
-
-    <TextView
         android:id="@+id/logged_today"
-        android:layout_width="60dp"
+        android:layout_width="77dp"
         android:layout_height="44dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/poppins_extrabold"
-        android:text="000"
+        android:text="000.00"
         android:textAlignment="textEnd"
         android:textColor="#0468FF"
-        android:textSize="30sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/textView23"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_day_text"/>
+        app:layout_constraintTop_toBottomOf="@+id/current_day_text" />
 
     <TextView
         android:id="@+id/textView26"
@@ -347,5 +334,22 @@
         app:layout_constraintBottom_toTopOf="@+id/highest_num"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/yesterday_num" />
+
+    <Button
+        android:id="@+id/edit_log"
+        android:layout_width="87dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginBottom="50dp"
+        android:backgroundTint="#FFFFFF"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Edit"
+        android:textColor="#0468FF"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/week_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/current_day_text"
+        app:layout_constraintVertical_bias="0.363" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
