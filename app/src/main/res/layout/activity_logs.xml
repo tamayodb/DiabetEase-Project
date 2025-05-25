@@ -181,10 +181,10 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/poppins_extrabold"
-        android:text="000.00"
+        android:text="000.0"
         android:textAlignment="textEnd"
         android:textColor="#0468FF"
-        android:textSize="20sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/textView23"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_day_text" />
