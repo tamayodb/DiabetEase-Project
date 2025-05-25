@@ -23,9 +23,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,13 +40,18 @@ public class SpecificRecipeActivity extends AppCompatActivity {
     private TextView ingredientsCount, recipeInstructions;
     private Button ingredientsTab, instructionTab;
     private LinearLayout ingredientsSection;
-    private ScrollView instructionsSection;
     private RecyclerView ingredientsRecycler;
     private ImageButton backButton;
 
     private FirebaseFirestore db;
     private List<Ingredients> ingredientsList = new ArrayList<>();
     private IngredientsAdapter ingredientsAdapter;
+    private RecyclerView instructionRecycler;
+    private InstructionAdapter instructionAdapter;
+    private List<Instruction> instructionList;
+    private TextView instructionCount;
+    private LinearLayout instructionsSection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +75,7 @@ public class SpecificRecipeActivity extends AppCompatActivity {
         NestedScrollView scrollView = findViewById(R.id.main_scroll);
 
         scrollToTopBtn.setOnClickListener(v -> scrollView.smoothScrollTo(0, 0));
+        loadInstructionsFromRecipe(recipe);
 
     }
 
@@ -82,7 +91,6 @@ public class SpecificRecipeActivity extends AppCompatActivity {
         fatsValue = findViewById(R.id.fats_value);
 
         ingredientsCount = findViewById(R.id.ingredients_count);
-        recipeInstructions = findViewById(R.id.recipe_instructions);
 
         ingredientsTab = findViewById(R.id.ingredients_tab);
         instructionTab = findViewById(R.id.instruction_tab);
@@ -94,7 +102,15 @@ public class SpecificRecipeActivity extends AppCompatActivity {
         backButton = findViewById(R.id.back_button);
 
         backButton.setOnClickListener(v -> finish());
+
+        instructionRecycler = findViewById(R.id.instruction_recycler);
+
+        instructionList = new ArrayList<>();
+        instructionAdapter = new InstructionAdapter(instructionList);
+        instructionRecycler.setLayoutManager(new LinearLayoutManager(this));
+        instructionRecycler.setAdapter(instructionAdapter);
     }
+
 
     private void setupTabNavigation() {
         ingredientsTab.setOnClickListener(v -> showIngredientsTab());
@@ -107,10 +123,8 @@ public class SpecificRecipeActivity extends AppCompatActivity {
     private void showIngredientsTab() {
         // Update tab appearance
         ingredientsTab.setBackground(ContextCompat.getDrawable(this, R.drawable.selected_tab_background));
-        ingredientsTab.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 
         instructionTab.setBackground(ContextCompat.getDrawable(this, android.R.color.transparent));
-        instructionTab.setTextColor(ContextCompat.getColor(this, R.color.white));
 
         // Show/hide sections
         ingredientsSection.setVisibility(View.VISIBLE);
@@ -120,10 +134,8 @@ public class SpecificRecipeActivity extends AppCompatActivity {
     private void showInstructionsTab() {
         // Update tab appearance
         instructionTab.setBackground(ContextCompat.getDrawable(this, R.drawable.selected_tab_background));
-        instructionTab.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 
         ingredientsTab.setBackground(ContextCompat.getDrawable(this, android.R.color.transparent));
-        ingredientsTab.setTextColor(ContextCompat.getColor(this, R.color.white));
 
         // Show/hide sections
         ingredientsSection.setVisibility(View.GONE);
@@ -150,8 +162,7 @@ public class SpecificRecipeActivity extends AppCompatActivity {
         // Nutrition info
         populateNutritionInfo(recipe);
 
-        // Instructions
-        populateInstructions(recipe);
+        loadInstructionsFromRecipe(recipe);
 
         // Setup ingredients
         setupIngredientsRecycler(recipe);
@@ -177,39 +188,6 @@ public class SpecificRecipeActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    private void populateInstructions(Recipes recipe) {
-        StringBuilder instructionText = new StringBuilder();
-
-        if (recipe.getInstructions() != null && !recipe.getInstructions().isEmpty()) {
-            for (Map<String, Object> step : recipe.getInstructions()) {
-                try {
-                    Object numberObj = step.get("number");
-                    String text = (String) step.get("text");
-
-                    int stepNum = 1; // default
-                    if (numberObj instanceof Long) {
-                        stepNum = ((Long) numberObj).intValue();
-                    } else if (numberObj instanceof Integer) {
-                        stepNum = (Integer) numberObj;
-                    }
-
-                    if (text != null && !text.trim().isEmpty()) {
-                        instructionText.append("Step ").append(stepNum).append(": ")
-                                .append(text.trim()).append("\n\n");
-                    }
-                } catch (Exception e) {
-                    Log.e("SpecificRecipe", "Error parsing instruction step", e);
-                }
-            }
-        }
-
-        if (instructionText.length() == 0) {
-            instructionText.append("No instructions available.");
-        }
-
-        recipeInstructions.setText(instructionText.toString().trim());
     }
 
     private void setupIngredientsRecycler(Recipes recipe) {
@@ -316,4 +294,24 @@ public class SpecificRecipeActivity extends AppCompatActivity {
                     });
         }
     }
+
+    private void loadInstructionsFromRecipe(Recipes recipe) {
+        instructionList.clear();
+
+        List<Map<String, Object>> rawInstructions = recipe.getInstructions();
+        if (rawInstructions != null) {
+            for (Map<String, Object> map : rawInstructions) {
+                // Safely cast Firestore values
+                Long stepNumberLong = (Long) map.get("number");
+                String stepText = (String) map.get("text");
+
+                if (stepNumberLong != null && stepText != null) {
+                    int stepNumber = stepNumberLong.intValue();
+                    instructionList.add(new Instruction(stepNumber, stepText));
+                }
+            }
+        }
+    }
+
+
 }

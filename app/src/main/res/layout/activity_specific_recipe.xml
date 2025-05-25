@@ -298,25 +298,29 @@
                     android:orientation="horizontal"
                     android:padding="6dp">
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/ingredients_tab"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:background="@drawable/selected_tab_background"
                         android:fontFamily="@font/poppins_bold"
+                        android:backgroundTint="@null"
                         android:text="Ingredients"
                         android:textColor="@android:color/white"
+                        android:textAllCaps="false"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/instruction_tab"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
+                        android:backgroundTint="@null"
                         android:fontFamily="@font/poppins_bold"
+                        android:textAllCaps="false"
                         android:text="Instruction"
                         android:textColor="@android:color/white"
                         android:textSize="14sp" />
@@ -374,22 +378,49 @@
                     </LinearLayout>
 
                     <!-- Instructions Section -->
-                    <ScrollView
+                    <LinearLayout
                         android:id="@+id/instructions_section"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:visibility="gone">
 
-                        <TextView
-                            android:id="@+id/recipe_instructions"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:lineSpacingExtra="4dp"
-                            android:text="Instructions will be displayed here"
-                            android:textColor="#333333"
-                            android:textSize="14sp" />
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                    </ScrollView>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/poppins_bold"
+                                android:text="Instructions"
+                                android:textColor="#1A1A1A"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/total_step_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_regular"
+                                android:text="5 Steps"
+                                android:textColor="#666666"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/instruction_recycler"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false" />
+
+                    </LinearLayout>
+
 
                 </FrameLayout>
 
