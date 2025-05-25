@@ -23,6 +23,7 @@
         android:id="@+id/profileTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
         android:text="Profile"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -48,8 +49,8 @@
 
     <ImageView
         android:id="@+id/ic_plus"
-        android:layout_width="45dp"
-        android:layout_height="71dp"
+        android:layout_width="38dp"
+        android:layout_height="70dp"
         android:layout_marginEnd="2dp"
         android:layout_marginBottom="-20dp"
         android:contentDescription="camera_icon"
@@ -61,8 +62,9 @@
         android:id="@+id/nameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
         android:text="Name"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="32dp"
         android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,9 +73,10 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameInputLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="32dp"
+        android:layout_height="60dp"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_marginTop="-5dp"
+        android:layout_marginStart="30dp"
         android:layout_marginEnd="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +87,9 @@
             android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="name"
+            android:fontFamily="@font/poppins_light"
+            android:hint="Name"
+            android:textSize="13.5sp"
             android:inputType="textPersonName"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,6 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Email"
+        android:fontFamily="@font/poppins_bold"
         android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
         android:textColor="@android:color/black"
@@ -102,8 +108,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInputLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="-5dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +121,9 @@
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="email@gmail.com"
+            android:fontFamily="@font/poppins_light"
+            android:hint="Email@gmail.com"
+            android:textSize="13.5sp"
             android:inputType="textEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -123,6 +131,7 @@
         android:id="@+id/birthdateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
         android:text="Password"
         android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
@@ -133,12 +142,14 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/birthdateInputLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="-5dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        app:endIconDrawable="@drawable/"
+        app:endIconDrawable="@drawable/hide_password"
         app:endIconMode="custom"
+        app:endIconMinSize="12dp"
+        app:endIconScaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/birthdateLabel"
@@ -147,19 +158,22 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/birthdateEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="password"
-            android:inputType="date"/>
+            android:layout_height="20dp"
+            android:fontFamily="@font/poppins_light"
+            android:hint="Password"
+            android:inputType="date"
+            android:textSize="13.5sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/updateButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="57dp"
         android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:text="Update"
+        android:fontFamily="@font/poppins_bold"
         android:textColor="@android:color/white"
         android:backgroundTint="#007BFF"
         app:layout_constraintStart_toStartOf="parent"
@@ -188,7 +202,7 @@
             android:text="About"
             android:textColor="@android:color/white"
             android:backgroundTint="#343A40"
-            app:icon="@drawable/"
+            app:icon="@drawable/about_icon"
             app:iconTint="@android:color/white"
             app:iconPadding="8dp"/>
 
@@ -201,7 +215,7 @@
             android:text="Log Out"
             android:textColor="@android:color/black"
             android:backgroundTint="@android:color/white"
-            app:icon="@drawable/"
+            app:icon="@drawable/logout_icon"
             app:iconTint="@android:color/black"
             app:iconPadding="8dp"/>
 
