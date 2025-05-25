@@ -2,11 +2,19 @@ package com.example.diabetease;
 
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RecipeResultActivity extends BaseActivity {
+public class RecipeResultActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecipeAdapter adapter;
@@ -32,19 +40,20 @@ public class RecipeResultActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_recipe_result);
-        setupNavigationBar();
+
 
         recyclerView = findViewById(R.id.recipe_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new RecipeAdapter(this, matchedRecipes);
         recyclerView.setAdapter(adapter);
 
-        // Back button (if included in layout)
-        ImageView backButton = findViewById(R.id.back_button_recipe_result);
+        ImageView backButton = findViewById(R.id.back_button);
         if (backButton != null) {
             backButton.setOnClickListener(v -> finish());
         }
+
 
         ArrayList<String> selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");
         ArrayList<String> selectedVegetables = getIntent().getStringArrayListExtra("selected_vegetables");
@@ -56,6 +65,7 @@ public class RecipeResultActivity extends BaseActivity {
         if (selectedMeats != null) selectedIngredients.addAll(selectedMeats);
 
         fetchMatchingRecipes(selectedIngredients);
+
     }
 
     private void fetchMatchingRecipes(List<String> selectedIngredients) {
@@ -74,7 +84,7 @@ public class RecipeResultActivity extends BaseActivity {
                 }
 
                 // Only show if 3 or more ingredients match
-                if (matchCount >= 3) {
+                if (matchCount >= 2) {
                     matchedRecipes.add(recipe);
                 }
             }

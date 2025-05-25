@@ -2,69 +2,318 @@ package com.example.diabetease;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpecificRecipeActivity extends AppCompatActivity {
     private ImageView recipeImage;
-    private TextView name, category, calories, servings, cookTime, description;
-    private TextView nutritionInfo, instructions;
+    private TextView recipeName, recipeDescription, recipeCookTime;
+    private TextView carbsValue, proteinValue, sweetenerValue, fatsValue;
+    private TextView ingredientsCount, recipeInstructions;
+    private Button ingredientsTab, instructionTab;
+    private LinearLayout ingredientsSection;
+    private ScrollView instructionsSection;
+    private RecyclerView ingredientsRecycler;
+    private ImageButton backButton;
+
+    private FirebaseFirestore db;
+    private List<Ingredients> ingredientsList = new ArrayList<>();
+    private IngredientsAdapter ingredientsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_specific_recipe);
 
+        db = FirebaseFirestore.getInstance();
 
-        recipeImage = findViewById(R.id.recipe_image);
-        name = findViewById(R.id.recipe_name);
-        category = findViewById(R.id.recipe_category);
-        calories = findViewById(R.id.recipe_calories);
-        servings = findViewById(R.id.recipe_servings);
-        cookTime = findViewById(R.id.recipe_cook_time);
-        description = findViewById(R.id.recipe_description);
-        nutritionInfo = findViewById(R.id.recipe_nutrition);
-        instructions = findViewById(R.id.recipe_instructions);
+        initializeViews();
+        setupTabNavigation();
 
         Recipes recipe = getIntent().getParcelableExtra("recipe");
 
         if (recipe != null) {
-            Glide.with(this).load(recipe.getImage_url()).into(recipeImage);
-            name.setText(recipe.getName());
-            category.setText(recipe.getCategory());
-            calories.setText(String.valueOf(recipe.getCalories()) + " kcal");
-            servings.setText("Servings: " + recipe.getServings());
-            cookTime.setText("Cook Time: " + recipe.getCook_time() + " mins");
-            description.setText(recipe.getDescription());
+            populateRecipeData(recipe);
+        }
 
-            nutritionInfo.setText(TextUtils.join("\n", recipe.getNutri_info()));
+        View scrollToTopBtn = findViewById(R.id.scroll_to_top_button);
+        NestedScrollView scrollView = findViewById(R.id.main_scroll);
 
-            StringBuilder instructionText = new StringBuilder();
-            for (Map<String, Object> step : recipe.getInstructions()) {
-                int stepNum = ((Long) step.get("number")).intValue();
-                String text = (String) step.get("text");
-                instructionText.append("Step ").append(stepNum).append(": ").append(text).append("\n\n");
-            }
-            instructions.setText(instructionText.toString());
+        scrollToTopBtn.setOnClickListener(v -> scrollView.smoothScrollTo(0, 0));
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-
-
-        });
     }
-}
+
+    private void initializeViews() {
+        recipeImage = findViewById(R.id.recipe_image);
+        recipeName = findViewById(R.id.recipe_name);
+        recipeDescription = findViewById(R.id.recipe_description);
+        recipeCookTime = findViewById(R.id.recipe_cook_time);
+
+        carbsValue = findViewById(R.id.carbs_value);
+        proteinValue = findViewById(R.id.protein_value);
+        sweetenerValue = findViewById(R.id.sweetener_value);
+        fatsValue = findViewById(R.id.fats_value);
+
+        ingredientsCount = findViewById(R.id.ingredients_count);
+        recipeInstructions = findViewById(R.id.recipe_instructions);
+
+        ingredientsTab = findViewById(R.id.ingredients_tab);
+        instructionTab = findViewById(R.id.instruction_tab);
+
+        ingredientsSection = findViewById(R.id.ingredients_section);
+        instructionsSection = findViewById(R.id.instructions_section);
+
+        ingredientsRecycler = findViewById(R.id.ingredients_recycler);
+        backButton = findViewById(R.id.back_button);
+
+        backButton.setOnClickListener(v -> finish());
+    }
+
+    private void setupTabNavigation() {
+        ingredientsTab.setOnClickListener(v -> showIngredientsTab());
+        instructionTab.setOnClickListener(v -> showInstructionsTab());
+
+        // Set initial state to ingredients tab
+        showIngredientsTab();
+    }
+
+    private void showIngredientsTab() {
+        // Update tab appearance
+        ingredientsTab.setBackground(ContextCompat.getDrawable(this, R.drawable.selected_tab_background));
+        ingredientsTab.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+
+        instructionTab.setBackground(ContextCompat.getDrawable(this, android.R.color.transparent));
+        instructionTab.setTextColor(ContextCompat.getColor(this, R.color.white));
+
+        // Show/hide sections
+        ingredientsSection.setVisibility(View.VISIBLE);
+        instructionsSection.setVisibility(View.GONE);
+    }
+
+    private void showInstructionsTab() {
+        // Update tab appearance
+        instructionTab.setBackground(ContextCompat.getDrawable(this, R.drawable.selected_tab_background));
+        instructionTab.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+
+        ingredientsTab.setBackground(ContextCompat.getDrawable(this, android.R.color.transparent));
+        ingredientsTab.setTextColor(ContextCompat.getColor(this, R.color.white));
+
+        // Show/hide sections
+        ingredientsSection.setVisibility(View.GONE);
+        instructionsSection.setVisibility(View.VISIBLE);
+    }
+
+    private void populateRecipeData(Recipes recipe) {
+        // Load image with error handling
+        Glide.with(this)
+                .load(recipe.getImage_url())
+                .placeholder(R.drawable.placeholder_recipe)
+                .error(R.drawable.placeholder_recipe)
+                .into(recipeImage);
+
+        // Basic info
+        recipeName.setText(recipe.getName() != null ? recipe.getName() : "Unnamed Recipe");
+        recipeDescription.setText(recipe.getDescription() != null ? recipe.getDescription() : "No description available");
+        String cookTime = String.valueOf(recipe.getCook_time());
+        if (cookTime == null || cookTime.isEmpty()) {
+            cookTime = "0";
+        }
+        recipeCookTime.setText(String.format("%s Min", cookTime));
+
+        // Nutrition info
+        populateNutritionInfo(recipe);
+
+        // Instructions
+        populateInstructions(recipe);
+
+        // Setup ingredients
+        setupIngredientsRecycler(recipe);
+    }
+
+    private void populateNutritionInfo(Recipes recipe) {
+        // Array of TextViews to populate
+        TextView[] nutritionTextViews = {carbsValue, proteinValue, fatsValue, sweetenerValue};
+
+        // Default values
+        for (TextView tv : nutritionTextViews) {
+            tv.setText("0g");
+        }
+
+        if (recipe.getNutri_info() != null && !recipe.getNutri_info().isEmpty()) {
+            List<String> nutriInfo = recipe.getNutri_info();
+
+            // Display up to 4 nutrition values, whatever they are
+            for (int i = 0; i < Math.min(nutriInfo.size(), nutritionTextViews.length); i++) {
+                String nutrient = nutriInfo.get(i);
+                if (nutrient != null && !nutrient.trim().isEmpty()) {
+                    nutritionTextViews[i].setText(nutrient);
+                }
+            }
+        }
+    }
+
+    private void populateInstructions(Recipes recipe) {
+        StringBuilder instructionText = new StringBuilder();
+
+        if (recipe.getInstructions() != null && !recipe.getInstructions().isEmpty()) {
+            for (Map<String, Object> step : recipe.getInstructions()) {
+                try {
+                    Object numberObj = step.get("number");
+                    String text = (String) step.get("text");
+
+                    int stepNum = 1; // default
+                    if (numberObj instanceof Long) {
+                        stepNum = ((Long) numberObj).intValue();
+                    } else if (numberObj instanceof Integer) {
+                        stepNum = (Integer) numberObj;
+                    }
+
+                    if (text != null && !text.trim().isEmpty()) {
+                        instructionText.append("Step ").append(stepNum).append(": ")
+                                .append(text.trim()).append("\n\n");
+                    }
+                } catch (Exception e) {
+                    Log.e("SpecificRecipe", "Error parsing instruction step", e);
+                }
+            }
+        }
+
+        if (instructionText.length() == 0) {
+            instructionText.append("No instructions available.");
+        }
+
+        recipeInstructions.setText(instructionText.toString().trim());
+    }
+
+    private void setupIngredientsRecycler(Recipes recipe) {
+        // Initialize RecyclerView first
+        ingredientsAdapter = new IngredientsAdapter(ingredientsList);
+        ingredientsRecycler.setLayoutManager(new LinearLayoutManager(this));
+        ingredientsRecycler.setAdapter(ingredientsAdapter);
+        ingredientsRecycler.setNestedScrollingEnabled(false);
+
+        if (recipe.getIngredients() != null && !recipe.getIngredients().isEmpty()) {
+            int count = recipe.getIngredients().size();
+            ingredientsCount.setText(count + (count == 1 ? " Item" : " Items"));
+
+            // Add logging to debug
+            Log.d("SpecificRecipe", "Total ingredients to fetch: " + count);
+            for (int i = 0; i < recipe.getIngredients().size(); i++) {
+                Log.d("SpecificRecipe", "Ingredient ID " + i + ": " + recipe.getIngredients().get(i));
+            }
+
+            // Fetch ingredient details
+            fetchIngredientDetails(recipe.getIngredients());
+        } else {
+            ingredientsCount.setText("0 Items");
+        }
+    }
+
+    private void fetchIngredientDetails(List<String> ingredientIds) {
+        ingredientsList.clear();
+        ingredientsAdapter.notifyDataSetChanged();
+
+        if (ingredientIds.isEmpty()) {
+            return;
+        }
+
+        // Filter out null/empty ingredient IDs first
+        List<String> validIngredientIds = new ArrayList<>();
+        for (String id : ingredientIds) {
+            if (id != null && !id.trim().isEmpty()) {
+                validIngredientIds.add(id.trim());
+            }
+        }
+
+        if (validIngredientIds.isEmpty()) {
+            Log.w("SpecificRecipe", "No valid ingredient IDs found");
+            return;
+        }
+
+        Log.d("SpecificRecipe", "Fetching " + validIngredientIds.size() + " valid ingredients");
+
+        AtomicInteger loadedCount = new AtomicInteger(0);
+        final int totalToLoad = validIngredientIds.size();
+
+        for (String ingredientId : validIngredientIds) {
+            Log.d("SpecificRecipe", "Fetching ingredient: " + ingredientId);
+
+            db.collection("ingredients").document(ingredientId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        int currentCount = loadedCount.incrementAndGet();
+                        Log.d("SpecificRecipe", "Loaded " + currentCount + "/" + totalToLoad + " ingredients");
+
+                        if (documentSnapshot.exists()) {
+                            try {
+                                Ingredients ingredient = documentSnapshot.toObject(Ingredients.class);
+                                if (ingredient != null) {
+                                    Log.d("SpecificRecipe", "Successfully parsed ingredient: " + ingredient.getName());
+
+                                    // Add to list and notify adapter immediately
+                                    ingredientsList.add(ingredient);
+
+                                    // Run on UI thread to update adapter
+                                    runOnUiThread(() -> {
+                                        ingredientsAdapter.notifyItemInserted(ingredientsList.size() - 1);
+                                    });
+                                } else {
+                                    Log.w("SpecificRecipe", "Failed to parse ingredient: " + ingredientId);
+                                }
+                            } catch (Exception e) {
+                                Log.e("SpecificRecipe", "Error parsing ingredient: " + ingredientId, e);
+                            }
+                        } else {
+                            Log.w("SpecificRecipe", "Ingredient document not found: " + ingredientId);
+                        }
+
+                        // Final update when all are loaded
+                        if (currentCount == totalToLoad) {
+                            Log.d("SpecificRecipe", "All ingredients loaded. Final list size: " + ingredientsList.size());
+                            runOnUiThread(() -> {
+                                ingredientsAdapter.notifyDataSetChanged();
+                            });
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        int currentCount = loadedCount.incrementAndGet();
+                        Log.e("SpecificRecipe", "Error fetching ingredient: " + ingredientId, e);
+
+                        // Still update count to prevent hanging
+                        if (currentCount == totalToLoad) {
+                            Log.d("SpecificRecipe", "All ingredients processed (with errors). Final list size: " + ingredientsList.size());
+                            runOnUiThread(() -> {
+                                ingredientsAdapter.notifyDataSetChanged();
+                            });
+                        }
+                    });
+        }
+    }
 }
