@@ -129,7 +129,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/continue_button"
-        android:layout_width="300dp"
+        android:layout_width="380dp"
         android:layout_height="wrap_content"
         android:background="@drawable/button_recipe_con"
         android:text="Generate Food Recipe"
