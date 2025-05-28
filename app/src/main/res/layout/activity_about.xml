@@ -128,7 +128,7 @@
                         android:id="@+id/teamMemberImage1"
                         android:layout_width="120dp"
                         android:layout_height="118dp"
-                        android:src="@drawable/profile_pic"
+                        android:src="@drawable/rod"
                         app:civ_border_color="#E0E0E0"
                         app:civ_border_width="2dp" />
 
@@ -163,7 +163,7 @@
                         android:id="@+id/teamMemberImage2"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
-                        android:src="@drawable/profile_pic"
+                        android:src="@drawable/danyssa"
                         app:civ_border_color="#E0E0E0"
                         app:civ_border_width="2dp"/>
 
@@ -212,7 +212,7 @@
             android:id="@+id/teamMemberImage3"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/profile_pic"
+            android:src="@drawable/mark"
             app:civ_border_color="#E0E0E0"
             app:civ_border_width="2dp"/>
 
@@ -249,7 +249,7 @@
             android:id="@+id/teamMemberImage4"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/profile_pic"
+            android:src="@drawable/ella"
             app:civ_border_color="#E0E0E0"
             app:civ_border_width="2dp"/>
 
@@ -298,7 +298,7 @@
                 android:id="@+id/teamMemberImage5"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/profile_pic"
+                android:src="@drawable/nicole"
                 app:civ_border_color="#E0E0E0"
                 app:civ_border_width="2dp"/>
 

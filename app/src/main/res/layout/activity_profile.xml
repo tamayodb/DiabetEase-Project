@@ -37,20 +37,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1" />
 
+
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profilePicture"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/profile_pic"
-        app:strokeColor="@android:color/white"
-        app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileTitle"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
-
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+        app:strokeColor="@android:color/white"
+        app:strokeWidth="2dp" />
 
     <ImageView
         android:id="@+id/ic_plus"
