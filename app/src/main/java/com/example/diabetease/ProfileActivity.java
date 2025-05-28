@@ -68,6 +68,8 @@ public class ProfileActivity extends BaseActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
 
+        setupNavigationBar();
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
