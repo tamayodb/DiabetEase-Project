@@ -97,9 +97,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_light"
-            android:hint="Name"
-            android:textSize="13.5sp"
-            android:inputType="textPersonName"/>
+            android:inputType="textPersonName"
+            android:textSize="13.5sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -135,9 +134,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_light"
-            android:hint="Email@gmail.com"
-            android:textSize="13.5sp"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textEmailAddress"
+            android:textSize="13.5sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -156,26 +154,26 @@
         android:id="@+id/birthdateInputLayout"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="-5dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="-5dp"
         android:layout_marginEnd="32dp"
-        app:boxCornerRadiusTopStart="16dp"
-        app:boxCornerRadiusTopEnd="16dp"
-        app:boxCornerRadiusBottomStart="16dp"
         app:boxCornerRadiusBottomEnd="16dp"
-        app:endIconScaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:endIconMode="password_toggle"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/birthdateLabel"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <com.google.android.material.textfield.TextInputEditText
+    <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/birthdateEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/poppins_light"
             android:hint="Enter New Password"
-            android:inputType="date"
+            android:inputType="textPassword"
             android:textSize="13.5sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
