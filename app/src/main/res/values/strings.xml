@@ -53,7 +53,7 @@
     <string name="tap_on_vegetables_to_select_them_for_your_recipe">Tap on vegetables to select them for your recipe</string>
     <string name="vegetable_icon">Vegetable Icon</string>
     <string name="carrot">Carrot</string>
-<!--    <string name="back_button_vegetable">Back Button</string>-->
+    <!--    <string name="back_button_vegetable">Back Button</string>-->
     <string name="confirm_selection">Confirm Selection</string>
 
     <!-- Recipe screen -->
@@ -68,7 +68,8 @@
     <string name="ingredients">Ingredients</string>
     <string name="ingredients_list_placeholder">Selected ingredients will appear here.</string>
     <string name="tap_on_fruits_to_select_them_for_your_recipe">Tap on fruits to select them for your Recipe</string>
-    <string name="tap_on_proteins_to_select_them_for_your_recipe">Tap on Meat/Proteins to select them for your Recipe</string>c
+    <string name="tap_on_proteins_to_select_them_for_your_recipe">Tap on Meat/Proteins to select them for your Recipe</string>
+    c
 
 
 </resources>

@@ -1,6 +1,7 @@
 package com.example.diabetease;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -51,7 +52,7 @@ import java.util.TimeZone;
 
 public class LogsActivity extends BaseActivity {
 
-    private Button logButton, editLogButton;
+    private Button logButton, editLogButton, historyButton;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
 
@@ -92,6 +93,10 @@ public class LogsActivity extends BaseActivity {
         logButton.setOnClickListener(view -> showLogPopup());
 
         checkIfLoggedTodayAndToggleEditButton();
+
+
+        historyButton.setOnClickListener(view -> openGlucoseHistory());
+
     }
 
     private void initializeViews() {
@@ -106,6 +111,7 @@ public class LogsActivity extends BaseActivity {
         prevWeekButton = findViewById(R.id.prev_week_button);
         nextWeekButton = findViewById(R.id.next_week_button);
         currentDayText = findViewById(R.id.current_day_text);
+        historyButton = findViewById(R.id.history_button);
 
     }
 
@@ -123,6 +129,13 @@ public class LogsActivity extends BaseActivity {
             }
         });
     }
+
+    private void openGlucoseHistory() {
+        Intent intent = new Intent(LogsActivity.this, GlucoseHistory.class);
+        startActivity(intent);
+    }
+
+
 
     private void setupBarChart() {
         loadWeekData(currentWeekOffset);
