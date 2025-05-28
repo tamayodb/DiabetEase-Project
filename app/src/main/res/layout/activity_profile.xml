@@ -23,15 +23,16 @@
         android:id="@+id/profileTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:fontFamily="@font/poppins_bold"
         android:text="Profile"
+        android:textColor="@android:color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toEndOf="@+id/menuIcon"
-        app:layout_constraintTop_toTopOf="@+id/menuIcon"
         app:layout_constraintBottom_toBottomOf="@+id/menuIcon"
-        android:layout_marginStart="16dp"/>
+        app:layout_constraintStart_toEndOf="@+id/menuIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/profilePicture"
@@ -132,7 +133,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_bold"
-        android:text="Password"
+        android:text="Change Password"
         android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
         android:textColor="@android:color/black"
@@ -146,9 +147,6 @@
         android:layout_marginTop="-5dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        app:endIconDrawable="@drawable/hide_password"
-        app:endIconMode="custom"
-        app:endIconMinSize="12dp"
         app:endIconScaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -158,9 +156,9 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/birthdateEditText"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="match_parent"
             android:fontFamily="@font/poppins_light"
-            android:hint="Password"
+            android:hint="Enter New Password"
             android:inputType="date"
             android:textSize="13.5sp" />
     </com.google.android.material.textfield.TextInputLayout>
