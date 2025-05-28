@@ -52,12 +52,12 @@
                 android:id="@+id/logoImage"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:layout_marginStart="43dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginStart="24dp"
+                android:contentDescription="DiabetEase app logo"
                 android:src="@drawable/logo_2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/headerImage"
-                android:contentDescription="DiabetEase app logo" />
+                app:layout_constraintTop_toBottomOf="@+id/headerImage" />
 
             <TextView
                 android:id="@+id/appNameText"
@@ -85,6 +85,7 @@
                 android:fontFamily="@font/poppins_light"
                 android:lineSpacingExtra="4dp"
                 android:text="DiabetEase is your companion in managing diabetes with ease and confidence. This app offers a range of helpful tools including daily glucose tracking, insightful blood sugar history, and personalized stats. Stay informed with curated diabetes-related blogs, and discover healthy meals using our ingredient-based recipe finder. Whether you're monitoring your health or looking for diabetes-friendly food ideas, DiabetEase is designed to support your journey—every step of the way."
+                android:textAlignment="center"
                 android:textColor="@color/diabetes_text"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
