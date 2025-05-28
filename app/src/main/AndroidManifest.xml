@@ -35,6 +35,8 @@
         <activity
             android:name=".RecipeActivity"
             android:exported="false" />
+        <activity android:name=".SpecificRecipeActivity"
+            android:exported="false" />
         <activity
             android:name=".Step4Activity"
             android:exported="false" />
