@@ -7,17 +7,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileActivity"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:paddingTop="26dp">
 
     <ImageView
         android:id="@+id/menuIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="16dp"
+        android:src="@drawable/menu"
+        app:layout_constraintBottom_toBottomOf="@+id/profileTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@android:color/black" />
+        app:layout_constraintVertical_bias="0.761" />
 
     <TextView
         android:id="@+id/profileTitle"
@@ -32,7 +35,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/menuIcon"
         app:layout_constraintStart_toEndOf="@+id/menuIcon"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="1" />
 
     <ImageView
         android:id="@+id/profilePicture"
@@ -79,6 +82,10 @@
         android:layout_marginTop="-5dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="32dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusBottomEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameLabel"
@@ -113,6 +120,10 @@
         android:layout_marginTop="-5dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusBottomEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailLabel"
@@ -147,6 +158,10 @@
         android:layout_marginTop="-5dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusBottomEnd="16dp"
         app:endIconScaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
