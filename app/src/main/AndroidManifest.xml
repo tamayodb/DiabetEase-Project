@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DiabetEase">
         <activity
+            android:name=".AboutActivity"
+            android:exported="false" />
+        <activity
             android:name=".RecipeResultActivity"
             android:exported="false" />
         <activity

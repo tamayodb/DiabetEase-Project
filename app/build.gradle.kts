@@ -51,4 +51,6 @@ dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.google.android.material:material:1.10.0") // Use the latest version
 }

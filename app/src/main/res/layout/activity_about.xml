@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".AboutActivity"
+    android:paddingTop="-1dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="32dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/headerImage"
+                android:layout_width="400dp"
+                android:layout_height="230dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="Header image showing diabetes management tools"
+                android:scaleType="centerCrop"
+                android:src="@drawable/abt_banner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.454"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.App.RoundedCorners" />
+
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="20dp"
+                android:contentDescription="Back button"
+                android:padding="8dp"
+                android:src="@drawable/back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/logoImage"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/logo_2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/headerImage"
+                android:contentDescription="DiabetEase app logo" />
+
+            <TextView
+                android:id="@+id/appNameText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/poppins_bolditalic"
+                android:text="DiabetEase"
+                android:textColor="#007BFF"
+                android:textSize="38sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/logoImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/logoImage"
+                app:layout_constraintTop_toTopOf="@+id/logoImage" />
+
+            <TextView
+                android:id="@+id/descriptionText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/poppins_light"
+                android:lineSpacingExtra="4dp"
+                android:text="DiabetEase is your companion in managing diabetes with ease and confidence. This app offers a range of helpful tools including daily glucose tracking, insightful blood sugar history, and personalized stats. Stay informed with curated diabetes-related blogs, and discover healthy meals using our ingredient-based recipe finder. Whether you're monitoring your health or looking for diabetes-friendly food ideas, DiabetEase is designed to support your journey—every step of the way."
+                android:textColor="@color/diabetes_text"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/logoImage" />
+
+            <TextView
+                android:id="@+id/meetTheTeamTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/poppins_extrabold"
+                android:text="MEET THE TEAM"
+                android:textColor="#007BFF"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+
+            <LinearLayout
+                android:id="@+id/teamMembersLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@+id/meetTheTeamTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginEnd="16dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/teamMemberImage1"
+                        android:layout_width="120dp"
+                        android:layout_height="118dp"
+                        android:src="@drawable/profile_pic"
+                        app:civ_border_color="#E0E0E0"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:id="@+id/teamMemberName1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Rodney Estrada"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/teamMemberRole1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Project Manager"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="16dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/teamMemberImage2"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:src="@drawable/profile_pic"
+                        app:civ_border_color="#E0E0E0"
+                        app:civ_border_width="2dp"/>
+
+                    <TextView
+                        android:id="@+id/teamMemberName2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Danyssa Tamayo"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/teamMemberRole2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Backend Developer"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        <!-- New Row for Team Members -->
+        <LinearLayout
+            android:id="@+id/teamMembersLayout2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/teamMembersLayout"> <!-- Constrained below the first row -->
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginEnd="16dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/teamMemberImage3"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/profile_pic"
+            app:civ_border_color="#E0E0E0"
+            app:civ_border_width="2dp"/>
+
+        <TextView
+            android:id="@+id/teamMemberName3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Mark De Luna"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" /> <!-- Placeholder Name -->
+
+
+        <TextView
+            android:id="@+id/teamMemberRole3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Android Developer"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="16dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/teamMemberImage4"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/profile_pic"
+            app:civ_border_color="#E0E0E0"
+            app:civ_border_width="2dp"/>
+
+            <TextView
+                android:id="@+id/teamMemberName4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Michaela Cailing"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+
+            <TextView
+                android:id="@+id/teamMemberRole4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="UI/UX Designer"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+            <!-- New Row for ONE Centered Team Member -->
+            <LinearLayout
+                android:id="@+id/teamMembersLayout3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@+id/teamMembersLayout2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/teamMemberImage5"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/profile_pic"
+                app:civ_border_color="#E0E0E0"
+                app:civ_border_width="2dp"/>
+
+            <TextView
+                android:id="@+id/teamMemberName5"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Nicole Libunao"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:layout_height="wrap_content"/>
+
+
+            <TextView
+                android:id="@+id/teamMemberRole5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_medium"
+                android:text="QA Tester"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
