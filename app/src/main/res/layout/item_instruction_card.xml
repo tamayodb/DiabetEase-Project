@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:elevation="0dp"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@drawable/ingredient_item_background">
+
+        <!-- Circular step number -->
+        <TextView
+            android:id="@+id/step_number"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="1"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:background="@drawable/circle_background"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/poppins_bold" />
+
+        <TextView
+            android:id="@+id/step_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Instruction step goes here"
+            android:textColor="#2C2C2C"
+            android:textSize="16sp"
+            android:lineSpacingExtra="6dp"
+            android:fontFamily="@font/poppins_regular"
+            android:letterSpacing="0.005" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

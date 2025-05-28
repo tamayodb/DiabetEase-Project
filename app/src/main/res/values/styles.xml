@@ -11,4 +11,9 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>
     </style>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
 </resources>
