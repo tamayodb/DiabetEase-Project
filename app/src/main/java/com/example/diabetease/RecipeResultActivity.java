@@ -49,7 +49,7 @@ public class RecipeResultActivity extends AppCompatActivity {
         adapter = new RecipeAdapter(this, matchedRecipes);
         recyclerView.setAdapter(adapter);
 
-        ImageView backButton = findViewById(R.id.back_button);
+        ImageView backButton = findViewById(R.id.back_button_recipe_result);
         if (backButton != null) {
             backButton.setOnClickListener(v -> finish());
         }
