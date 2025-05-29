@@ -1,92 +1,158 @@
 package com.example.diabetease;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class GlucoseHistory extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private GlucoseAdapter adapter;
-    private List<Glucose> glucoseList = new ArrayList<>();
-    private FirebaseFirestore db;
-    private FirebaseAuth auth;
-    private Button filterButton, todayButton, historyButton;
+    private static final String TAG = "GlucoseHistory";
+
+    private RecyclerView glucoseRecyclerView;
+    private GlucoseAdapter glucoseAdapter;
+    private List<Glucose> glucoseList;
+
+    private FirebaseFirestore firestore;
+    private FirebaseAuth firebaseAuth;
+    private CollectionReference glucoseLogsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glucose_history);
 
-        recyclerView = findViewById(R.id.glucoseRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        glucoseRecyclerView = findViewById(R.id.glucoseRecyclerView);
+        glucoseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        glucoseList = new ArrayList<>();
+        glucoseAdapter = new GlucoseAdapter(glucoseList);
+        glucoseRecyclerView.setAdapter(glucoseAdapter);
 
-        adapter = new GlucoseAdapter(this, glucoseList);
-        recyclerView.setAdapter(adapter);
+        firebaseAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+        glucoseLogsRef = firestore.collection("glucose_logs");
 
-        db = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+        Log.d(TAG, "Activity created, starting data load...");
+        loadGlucoseData();
 
-        filterButton = findViewById(R.id.filterButton);
-        todayButton = findViewById(R.id.todayButton);
-        historyButton = findViewById(R.id.historyButton);
-
-        fetchGlucoseLogs();
-
-        todayButton.setOnClickListener(view -> filterToday());
-        historyButton.setOnClickListener(view -> fetchGlucoseLogs());
+        Button todayButton = findViewById(R.id.todayButton);
+        todayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GlucoseHistory.this, LogsActivity.class);
+                startActivity(intent);
+                // Optional: add finish() if you want to close the current activity
+                // finish();
+            }
+        });
     }
 
-    private void fetchGlucoseLogs() {
-        String userId = auth.getCurrentUser().getUid();
+    private void loadGlucoseData() {
+        String currentUserId = firebaseAuth.getCurrentUser().getUid();
+        Log.d(TAG, "Loading data for user: " + currentUserId);
 
-        db.collection("glucose_logs")
-                .whereEqualTo("user_id", userId)
-                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+        glucoseLogsRef.whereEqualTo("user_id", currentUserId)
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    glucoseList.clear();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Glucose glucose = document.toObject(Glucose.class);
-                        glucoseList.add(glucose);
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot result = task.getResult();
+                            Log.d(TAG, "Query successful! Found " + result.size() + " documents");
+
+                            glucoseList.clear();  // Clear old data
+                            int validRecords = 0;
+                            int invalidRecords = 0;
+
+                            for (DocumentSnapshot document : result) {
+                                Log.d(TAG, "Processing document: " + document.getId());
+
+                                String status = document.getString("glucose_status");
+                                Long value = document.getLong("glucose_value");
+                                Timestamp timestamp = document.getTimestamp("timestamp");
+
+                                // Debug each field
+                                Log.d(TAG, "Document fields - Status: " + status +
+                                        ", Value: " + value +
+                                        ", Timestamp: " + timestamp);
+
+                                // Only require value and timestamp - handle missing status
+                                if (value != null && timestamp != null) {
+                                    // If status is null, determine it based on glucose value
+                                    if (status == null || status.isEmpty()) {
+                                        status = determineGlucoseStatus(value.intValue());
+                                        Log.d(TAG, "Status was null, determined as: " + status);
+                                    }
+
+                                    Glucose glucose = new Glucose(
+                                            status,
+                                            value.intValue(),
+                                            timestamp.toDate().getTime(),
+                                            currentUserId
+                                    );
+                                    glucoseList.add(glucose);
+                                    validRecords++;
+                                    Log.d(TAG, "Added valid record: " + value + " " + status);
+                                } else {
+                                    invalidRecords++;
+                                    Log.w(TAG, "Skipped invalid record - missing value or timestamp");
+                                }
+                            }
+
+                            Log.d(TAG, "Processing complete - Valid: " + validRecords +
+                                    ", Invalid: " + invalidRecords +
+                                    ", Total in list: " + glucoseList.size());
+
+                            // Sort list descending by timestamp (latest first)
+                            Collections.sort(glucoseList, new Comparator<Glucose>() {
+                                @Override
+                                public int compare(Glucose g1, Glucose g2) {
+                                    return Long.compare(g2.getTimestamp(), g1.getTimestamp());
+                                }
+                            });
+
+                            Log.d(TAG, "List sorted, notifying adapter...");
+                            glucoseAdapter.notifyDataSetChanged(); // Update RecyclerView
+                            Log.d(TAG, "Adapter notified successfully");
+
+                        } else {
+                            Log.e(TAG, "Query failed", task.getException());
+                            Toast.makeText(GlucoseHistory.this, "Failed to load data: " +
+                                    task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
-                    adapter.notifyDataSetChanged();
                 });
     }
 
-    private void filterToday() {
-        String userId = auth.getCurrentUser().getUid();
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        db.collection("glucose_logs")
-                .whereEqualTo("user_id", userId)
-                .whereGreaterThanOrEqualTo("timestamp", new java.util.Date(cal.getTimeInMillis()))
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    glucoseList.clear();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Glucose glucose = document.toObject(Glucose.class);
-                        glucoseList.add(glucose);
-                    }
-                    adapter.notifyDataSetChanged();
-                });
+    // Helper method to determine glucose status based on value
+    private String determineGlucoseStatus(int glucoseValue) {
+        if (glucoseValue < 70) {
+            return "Low";
+        } else if (glucoseValue > 140) {
+            return "High";
+        } else {
+            return "Good";
+        }
     }
 }

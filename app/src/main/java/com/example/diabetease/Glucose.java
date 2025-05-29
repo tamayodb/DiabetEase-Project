@@ -1,30 +1,34 @@
 package com.example.diabetease;
 
-import java.util.Date;
-
 public class Glucose {
-    private String user_id;
-    private double glucose_value;
-    private Date timestamp;
     private String glucose_status;
+    private int glucose_value;
+    private long timestamp;
+    private String user_id;
 
-    // Required empty constructor for Firestore deserialization
     public Glucose() {}
 
-    // Getters
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public double getGlucose_value() {
-        return glucose_value;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
+    public Glucose(String glucose_status, int glucose_value, long timestamp, String user_id) {
+        this.glucose_status = glucose_status;
+        this.glucose_value = glucose_value;
+        this.timestamp = timestamp;
+        this.user_id = user_id;
     }
 
     public String getGlucose_status() {
         return glucose_status;
     }
+
+    public int getGlucose_value() {
+        return glucose_value;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
 }
+
