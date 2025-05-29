@@ -11,24 +11,9 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>
     </style>
-
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
-
-    <style name="ShapeAppearance.App.RoundedCorners" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">26dp</item> <!-- Adjust this value for the desired radius -->
-    </style>
-
-    <!-- To apply different radius to different corners -->
-    <style name="ShapeAppearance.App.CustomRoundedCorners" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">32dp</item>
-        <item name="cornerSizeTopRight">32dp</item>
-        <item name="cornerSizeBottomLeft">8dp</item>
-        <item name="cornerSizeBottomRight">8dp</item>
-    </style>
-
 </resources>

@@ -8,7 +8,16 @@
     android:background="@android:color/white"
     tools:context=".RecipeResultActivity">
 
-    <!-- Back Button -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recipe_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
+
+    <!-- Optional: Back button -->
     <ImageView
         android:id="@+id/back_button_recipe_result"
         android:layout_width="36dp"
@@ -20,24 +29,20 @@
         android:src="@drawable/back"
         android:contentDescription="Back" />
 
-    <!-- Category Filter Spinner -->
-    <Spinner
-        android:id="@+id/category_spinner"
-        android:layout_width="wrap_content"
+    <!-- Navigation Bar Container -->
+    <FrameLayout
+        android:id="@+id/navigationBarContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:layout_marginStart="16dp"
-        android:layout_gravity="top|start" />
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <!-- RecyclerView for Results -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recipe_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="110dp"
-        android:padding="12dp"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
+        <include
+            layout="@layout/navigation_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
