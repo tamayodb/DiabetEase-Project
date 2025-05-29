@@ -1,126 +1,79 @@
 package com.example.diabetease;
 
+import com.example.diabetease.Glucose;
+
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.ViewHolder> {
 
-    private static final String TAG = "GlucoseAdapter";
+public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.GlucoseViewHolder> {
+
     private List<Glucose> glucoseList;
+    private Context context;
 
-    public GlucoseAdapter(List<Glucose> glucoseList) {
+    public GlucoseAdapter(Context context, List<Glucose> glucoseList) {
+        this.context = context;
         this.glucoseList = glucoseList;
-        Log.d(TAG, "Adapter created with " + glucoseList.size() + " items");
     }
 
     @NonNull
     @Override
-    public GlucoseAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder called");
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.glucose_item, parent, false);
-        return new ViewHolder(view);
+    public GlucoseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.glucose_item, parent, false);
+        return new GlucoseViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GlucoseAdapter.ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder called for position: " + position);
+    public void onBindViewHolder(@NonNull GlucoseViewHolder holder, int position) {
+        Glucose glucose = glucoseList.get(position);
+        holder.glucoseValue.setText(String.valueOf(glucose.getGlucose_value()));
+        holder.unitText.setText("mg/dL");
 
-        if (position >= glucoseList.size()) {
-            Log.e(TAG, "Position " + position + " is out of bounds for list size " + glucoseList.size());
-            return;
-        }
+        // Format timestamp
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
+        String formattedTime = sdf.format(glucose.getTimestamp());
+        holder.dateText.setText(formattedTime);
 
-        Glucose record = glucoseList.get(position);
+        // Set status label text and color
+        String status = glucose.getGlucose_status();
+        holder.statusLabel.setText(status);
 
-        Log.d(TAG, "Binding record: Value=" + record.getGlucose_value() +
-                ", Status=" + record.getGlucose_status() +
-                ", Timestamp=" + record.getTimestamp());
-
-        // Set glucose value and unit
-        holder.valueText.setText(String.valueOf(record.getGlucose_value()));
-        holder.unitText.setText(" mg/dL");
-
-        // Set status
-        holder.statusLabel.setText(record.getGlucose_status());
-
-        // Set status color (using proper Color.parseColor)
-        switch (record.getGlucose_status().toLowerCase()) {
-            case "high":
-                holder.statusLabel.setTextColor(Color.parseColor("#FF3B30")); // Red
-                break;
-            case "low":
-                holder.statusLabel.setTextColor(Color.parseColor("#FF9500")); // Orange
-                break;
-            case "normal":
-            case "good":
-                holder.statusLabel.setTextColor(Color.parseColor("#34C759")); // Green
-                break;
-            default:
-                holder.statusLabel.setTextColor(Color.parseColor("#000000")); // Black
-                Log.w(TAG, "Unknown status: " + record.getGlucose_status());
-                break;
-        }
-
-        // Format timestamp to readable date
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM dd, yyyy", Locale.getDefault());
-            String formattedDate = sdf.format(new Date(record.getTimestamp()));
-            holder.dateText.setText(formattedDate);
-            Log.d(TAG, "Formatted date: " + formattedDate);
-        } catch (Exception e) {
-            Log.e(TAG, "Error formatting date for timestamp: " + record.getTimestamp(), e);
-            holder.dateText.setText("Invalid date");
+        if ("High".equalsIgnoreCase(status)) {
+            holder.statusLabel.setTextColor(Color.parseColor("#FF5F5F")); // red
+        } else if ("Low".equalsIgnoreCase(status)) {
+            holder.statusLabel.setTextColor(Color.parseColor("#FFB84D")); // orange
+        } else {
+            holder.statusLabel.setTextColor(Color.parseColor("#4CAF50")); // green
         }
     }
 
     @Override
     public int getItemCount() {
-        int count = glucoseList.size();
-        Log.d(TAG, "getItemCount: " + count);
-        return count;
+        return glucoseList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView valueText, unitText, statusLabel, dateText;
+    public static class GlucoseViewHolder extends RecyclerView.ViewHolder {
+        TextView glucoseValue, unitText, dateText, statusLabel;
 
-        public ViewHolder(@NonNull View itemView) {
+        public GlucoseViewHolder(@NonNull View itemView) {
             super(itemView);
-            valueText = itemView.findViewById(R.id.value_text);
+            glucoseValue = itemView.findViewById(R.id.value_text);
             unitText = itemView.findViewById(R.id.unit_text);
-            statusLabel = itemView.findViewById(R.id.status_label);
             dateText = itemView.findViewById(R.id.date_text);
-
-            // Log if any views are null
-            if (valueText == null) Log.e("ViewHolder", "value_text is null");
-            if (unitText == null) Log.e("ViewHolder", "unit_text is null");
-            if (statusLabel == null) Log.e("ViewHolder", "status_label is null");
-            if (dateText == null) Log.e("ViewHolder", "date_text is null");
+            statusLabel = itemView.findViewById(R.id.status_label);
         }
-    }
-
-    public void updateList(List<Glucose> newList) {
-        Log.d(TAG, "updateList called with " + newList.size() + " items");
-        glucoseList = newList;
-        notifyDataSetChanged();
-    }
-
-    public void addItems(List<Glucose> newItems) {
-        Log.d(TAG, "addItems called with " + newItems.size() + " new items");
-        int startPosition = glucoseList.size();
-        glucoseList.addAll(newItems);
-        notifyItemRangeInserted(startPosition, newItems.size());
     }
 }
