@@ -131,7 +131,7 @@ public class LogsActivity extends BaseActivity {
     }
 
     private void openGlucoseHistory() {
-        Intent intent = new Intent(LogsActivity.this, GlucoseHistory.class);
+        Intent intent = new Intent(this, GlucoseHistory.class);
         startActivity(intent);
     }
 
