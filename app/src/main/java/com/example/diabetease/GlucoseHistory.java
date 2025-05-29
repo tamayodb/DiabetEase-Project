@@ -1,10 +1,7 @@
 package com.example.diabetease;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -55,17 +52,6 @@ public class GlucoseHistory extends AppCompatActivity {
 
         Log.d(TAG, "Activity created, starting data load...");
         loadGlucoseData();
-
-        Button todayButton = findViewById(R.id.todayButton);
-        todayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GlucoseHistory.this, LogsActivity.class);
-                startActivity(intent);
-                // Optional: add finish() if you want to close the current activity
-                // finish();
-            }
-        });
     }
 
     private void loadGlucoseData() {
