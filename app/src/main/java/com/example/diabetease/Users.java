@@ -5,6 +5,7 @@ public class Users {
     private String email;
     private String firstName;
     private String lastName;
+    private String profilePictureUrl;
 
     // Required empty constructor for Firestore
     public Users() {}
@@ -25,4 +26,6 @@ public class Users {
     public String getLastName() {
         return lastName;
     }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
 }

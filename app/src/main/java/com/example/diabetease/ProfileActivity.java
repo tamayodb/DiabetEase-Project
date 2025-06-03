@@ -37,9 +37,20 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import android.widget.Toast; // For user feedback
+import android.util.Log;    // For debugging
 
 public class ProfileActivity extends BaseActivity {
 
@@ -235,32 +246,107 @@ public class ProfileActivity extends BaseActivity {
     }
 
     private void uploadProfilePicture(Uri imageUri) {
-        // Implement Firebase Storage upload logic here
-        // 1. Get a reference to Firebase Storage
-        // StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        // 2. Create a reference for the file (e.g., "profile_pictures/user_uid.jpg")
-        // StorageReference profilePicRef = storageRef.child("profile_pictures/" + currentUser.getUid() + ".jpg");
-        // 3. Upload the file
-        // profilePicRef.putFile(imageUri)
-        //    .addOnSuccessListener(taskSnapshot -> {
-        //        // Get the download URL
-        //        profilePicRef.getDownloadUrl().addOnSuccessListener(uri -> {
-        //            String downloadUrl = uri.toString();
-        //            // Save this downloadUrl to Firestore user document
-        //            db.collection("users").document(currentUser.getUid())
-        //                    .update("profilePictureUrl", downloadUrl)
-        //                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Profile picture URL updated in Firestore."))
-        //                    .addOnFailureListener(e -> Log.e(TAG, "Error updating profile picture URL.", e));
-        //            Toast.makeText(ProfileActivity.this, "Profile picture uploaded!", Toast.LENGTH_SHORT).show();
-        //        });
-        //    })
-        //    .addOnFailureListener(e -> {
-        //        Log.e(TAG, "Error uploading profile picture", e);
-        //        Toast.makeText(ProfileActivity.this, "Failed to upload profile picture.", Toast.LENGTH_SHORT).show();
-        //    });
-        Log.i(TAG, "Profile picture upload logic for " + imageUri.toString() + " needs to be implemented with Firebase Storage.");
-        Toast.makeText(this, "Profile picture upload needs Firebase Storage setup.", Toast.LENGTH_LONG).show();
+        if (currentUser == null) {
+            Toast.makeText(this, "Not logged in. Cannot upload picture.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (imageUri == null) {
+            Toast.makeText(this, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        // Show some progress to the user (optional, but good UX)
+        Toast.makeText(ProfileActivity.this, "Uploading profile picture...", Toast.LENGTH_LONG).show();
+
+        // 1. Create a reference in Firebase Storage
+        // It's good practice to use a unique path, e.g., using the user's UID
+        final String userId = currentUser.getUid();
+        // You can choose a file name, e.g., "profile.jpg" or a more unique name
+        // Using a consistent name like "profile.jpg" per user simplifies things,
+        // as it will overwrite the previous profile picture for that user.
+
+        if (imageUri != null) {
+            Log.d(TAG, "Attempting to upload URI: " + imageUri.toString());
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                if (inputStream != null) {
+                    Log.d(TAG, "Successfully opened InputStream for URI. File should be accessible.");
+                    inputStream.close();
+                } else {
+                    Log.e(TAG, "Failed to open InputStream for URI. URI might be invalid or inaccessible.");
+                    Toast.makeText(this, "Error: Could not access selected image.", Toast.LENGTH_LONG).show();
+                    return; // Don't proceed with upload
+                }
+            } catch (FileNotFoundException e) {
+                Log.e(TAG, "FileNotFoundException for URI: " + imageUri.toString(), e);
+                Toast.makeText(this, "Error: Selected image file not found.", Toast.LENGTH_LONG).show();
+                return; // Don't proceed with upload
+            } catch (IOException e) {
+                Log.e(TAG, "IOException for URI: " + imageUri.toString(), e);
+                Toast.makeText(this, "Error: Could not read selected image.", Toast.LENGTH_LONG).show();
+                return; // Don't proceed with upload
+            }
+        } else {
+            Log.e(TAG, "imageUri is null before putFile call.");
+            return;
+        }
+
+        StorageReference profilePicRef = FirebaseStorage.getInstance()
+                .getReference()
+                .child("profile_pictures/" + userId + "/profile.jpg"); // Example path
+
+        // 2. Start the upload
+        UploadTask uploadTask = profilePicRef.putFile(imageUri);
+
+        // 3. Register observers to listen for when the upload is done or if it fails
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            // Task completed successfully
+            Log.d(TAG, "Image uploaded successfully to Firebase Storage.");
+
+            // 4. Get the download URL
+            profilePicRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                String newProfilePicUrl = downloadUri.toString();
+                Log.d(TAG, "Download URL: " + newProfilePicUrl);
+
+                // 5. Update the URL in Firestore
+                db.collection("users").document(userId)
+                        .update("profilePictureUrl", newProfilePicUrl)
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d(TAG, "Profile picture URL successfully updated in Firestore.");
+                            Toast.makeText(ProfileActivity.this, "Profile picture updated!", Toast.LENGTH_SHORT).show();
+                            // You might want to reload the user profile here or let Glide handle it
+                            // if the ImageView is still visible and the URL has changed.
+                            // For instance, you could call loadUserProfile() again,
+                            // or if Glide is smart, it might update if the source URL changes.
+                            // To be safe, if you want immediate refresh:
+                            Glide.with(ProfileActivity.this)
+                                    .load(newProfilePicUrl)
+                                    .placeholder(R.drawable.profile_pic)
+                                    .error(R.drawable.profile_pic)
+                                    .into(profilePictureImageView);
+
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error updating profile picture URL in Firestore.", e);
+                            Toast.makeText(ProfileActivity.this, "Failed to save picture URL to database.", Toast.LENGTH_LONG).show();
+                        });
+
+            }).addOnFailureListener(exception -> {
+                // Handle any errors getting the download URL
+                Log.e(TAG, "Error getting download URL.", exception);
+                Toast.makeText(ProfileActivity.this, "Failed to get picture download URL.", Toast.LENGTH_LONG).show();
+            });
+
+        }).addOnFailureListener(exception -> {
+            // Handle unsuccessful uploads
+            Log.e(TAG, "Error uploading image to Firebase Storage.", exception);
+            Toast.makeText(ProfileActivity.this, "Image upload failed: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+        }).addOnProgressListener(snapshot -> {
+            // You can use this to show upload progress to the user
+            double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+            Log.d(TAG, "Upload is " + progress + "% done");
+            // Example: myProgressBar.setProgress((int) progress);
+        });
     }
 
 

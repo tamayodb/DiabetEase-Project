@@ -94,7 +94,10 @@ public class Step3Activity extends AppCompatActivity {
             String email = getIntent().getStringExtra("email");
             String password = getIntent().getStringExtra("password");
 
-            // Register to Firebase Auth
+            // Define the default profile picture URL
+            String defaultProfilePictureUrl = "https://drive.usercontent.google.com/u/0/uc?id=1dtwRrKtn-Mm7bJ28F6OO2-bPWZ4GGwK2&export=download";
+
+            // Register tuserMap.put("profilePictureUrl", defaultProfilePictureUrl);o Firebase Auth
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -108,6 +111,7 @@ public class Step3Activity extends AppCompatActivity {
                             userMap.put("lastName", lastName);
                             userMap.put("birthdate", birthdate);
                             userMap.put("email", email);
+                            userMap.put("profilePictureUrl", defaultProfilePictureUrl);
 
                             db.collection("users").document(userId).set(userMap)
                                     .addOnSuccessListener(aVoid -> {
