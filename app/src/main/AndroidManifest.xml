@@ -2,21 +2,42 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- For Android 12 (API 32) and below -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <!--
+    Permissions needed:
+    1. INTERNET: For Cloudinary uploads and Glide to load images from URLs.
+    2. READ_EXTERNAL_STORAGE: For Android 12 (API 32) and below to pick images from gallery.
+    3. READ_MEDIA_IMAGES: For Android 13 (API 33) and above to pick images from gallery.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- For picking images from gallery -->
+    <!-- For Android 12 (API level 32) and below -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <!-- For Android 13 (API 33) and above - more granular media permissions -->
+    <!--
+         For Android 13 (API level 33) and above.
+         If your app targets Android 13 or higher, this permission is required
+         to access images in shared storage.
+    -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!--
+         If you also plan to allow picking videos or audio, you'd add:
+         <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+         <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    -->
 
     <application
-        android:allowBackup="true"
+        android:name=".MyApplication"  android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/logo_1"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DiabetEase">
+        android:theme="@style/Theme.DiabetEase"
+        tools:targetApi="31"> <!-- It's good practice to set targetApi in tools if you use maxSdkVersion -->
+
         <activity
             android:name=".AboutActivity"
             android:exported="false" />
@@ -78,10 +99,20 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+        If you are using Cloudinary's MediaManager, it might have its own components
+        that need to be declared, like services or providers, especially for
+        background uploads or sync. However, for basic foreground uploads as shown
+        in the example, often no additional components are strictly needed here unless
+        specified by the Cloudinary SDK documentation for advanced features.
+        Always check the latest Cloudinary Android SDK documentation for any
+        required manifest declarations.
+        -->
+
     </application>
 
 </manifest>

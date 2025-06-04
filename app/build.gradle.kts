@@ -57,4 +57,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.1")) // Check for the latest version
     implementation("com.google.firebase:firebase-storage")
 
+    implementation("com.cloudinary:cloudinary-android:2.4.0")
+
 }
