@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity"
     android:background="#F5F5F5"
-    android:paddingTop="26dp">
+    android:paddingTop="27dp">
 
     <ImageView
         android:id="@+id/menuIcon"
@@ -36,7 +36,6 @@
         app:layout_constraintStart_toEndOf="@+id/menuIcon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1" />
-
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profilePicture"
@@ -139,11 +138,11 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/birthdateLabel"
+        android:id="@+id/newPasswordLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_bold"
-        android:text="Change Password"
+        android:text="New Password"
         android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
         android:textColor="@android:color/black"
@@ -151,7 +150,7 @@
         app:layout_constraintTop_toBottomOf="@+id/emailInputLayout"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/birthdateInputLayout"
+        android:id="@+id/newPasswordInputLayout"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="32dp"
@@ -164,40 +163,80 @@
         app:endIconMode="password_toggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/birthdateLabel"
+        app:layout_constraintTop_toBottomOf="@+id/newPasswordLabel"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/birthdateEditText"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/newPasswordEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/poppins_light"
-            android:hint="Enter New Password"
+            android:hint="Enter New Password (optional)"
             android:inputType="textPassword"
             android:textSize="13.5sp" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/currentPasswordLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:text="Current Password"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newPasswordInputLayout"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/currentPasswordInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="-5dp"
+        android:layout_marginEnd="32dp"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentPasswordLabel"
+        app:passwordToggleEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/currentPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_light"
+            android:hint="Required to change email/password"
+            android:inputType="textPassword"
+            android:textSize="13.5sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/updateButton"
         android:layout_width="0dp"
         android:layout_height="57dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:text="Update"
+        android:text="Update Profile"
         android:fontFamily="@font/poppins_bold"
         android:textColor="@android:color/white"
         android:backgroundTint="#007BFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/birthdateInputLayout"/>
+        app:layout_constraintTop_toBottomOf="@+id/currentPasswordInputLayout"/>
 
     <LinearLayout
         android:id="@+id/actionButtonsLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:weightSum="2"
@@ -230,7 +269,6 @@
             app:icon="@drawable/logout_icon"
             app:iconTint="@android:color/black"
             app:iconPadding="8dp"/>
-
     </LinearLayout>
 
     <include

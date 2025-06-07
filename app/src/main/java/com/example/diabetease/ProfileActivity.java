@@ -30,7 +30,10 @@ import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,15 +41,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class ProfileActivity extends BaseActivity {
 
     private static final String TAG = "ProfileActivity";
-    // This should be your actual Cloudinary upload preset name
-    private static final String CLOUDINARY_UPLOAD_PRESET = "android_profile_pics";
+    private static final String CLOUDINARY_UPLOAD_PRESET = "android_profile_pics"; // Your Cloudinary upload preset
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -57,6 +62,7 @@ public class ProfileActivity extends BaseActivity {
     private TextInputEditText nameEditText;
     private TextInputEditText emailEditText;
     private TextInputEditText newPasswordEditText;
+    private TextInputEditText currentPasswordEditText; // For re-authentication
     private Button updateButton;
     private Button aboutButton;
     private Button logOutButton;
@@ -65,15 +71,28 @@ public class ProfileActivity extends BaseActivity {
     private static final int READ_STORAGE_PERMISSION_REQUEST_CODE = 101;
     private Uri selectedImageUri = null;
 
+    private int pendingOperations = 0;
+    private final List<String> successfulUpdates = new ArrayList<>();
+    private String originalFullName = "";
+    private String originalEmailFromAuth = ""; // Stores the email from Auth at load time
+
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean isValidEmail(String emailStr) {
+        if (emailStr == null) {
+            return false;
+        }
+        return VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr).matches();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        setupNavigationBar(); // Make sure this method exists in BaseActivity or here
-
-        // The problematic check that always triggered an error toast has been removed.
-        // It's assumed that CLOUDINARY_UPLOAD_PRESET is correctly set now.
+        setupNavigationBar(); // From BaseActivity
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -83,13 +102,11 @@ public class ProfileActivity extends BaseActivity {
         icPlusImageView = findViewById(R.id.ic_plus);
         nameEditText = findViewById(R.id.nameEditText);
         emailEditText = findViewById(R.id.emailEditText);
-        newPasswordEditText = findViewById(R.id.birthdateEditText); // Assuming this is for the new password
+        newPasswordEditText = findViewById(R.id.newPasswordEditText);
+        currentPasswordEditText = findViewById(R.id.currentPasswordEditText);
         updateButton = findViewById(R.id.updateButton);
         aboutButton = findViewById(R.id.aboutButton);
         logOutButton = findViewById(R.id.logOutButton);
-
-        emailEditText.setFocusable(false);
-        emailEditText.setClickable(false);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -101,7 +118,7 @@ public class ProfileActivity extends BaseActivity {
             loadUserProfile();
         } else {
             navigateToLogin();
-            return; // Important to return if navigating away
+            return;
         }
 
         galleryLauncher = registerForActivityResult(
@@ -111,53 +128,36 @@ public class ProfileActivity extends BaseActivity {
                         Intent data = result.getData();
                         if (data != null && data.getData() != null) {
                             selectedImageUri = data.getData();
-                            Log.d(TAG, "Image selected from gallery. URI: " + selectedImageUri.toString());
-
+                            Log.d(TAG, "Image selected: " + selectedImageUri.toString());
                             try {
-                                // Attempt to take persistable URI permission if applicable
-                                final int intentFlags = data.getFlags();
-                                if ((intentFlags & Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0) {
-                                    if ("content".equals(selectedImageUri.getScheme())) {
+                                // Persist URI permission for content URIs
+                                if ("content".equals(selectedImageUri.getScheme())) {
+                                    final int intentFlags = data.getFlags();
+                                    if ((intentFlags & Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0) {
                                         getContentResolver().takePersistableUriPermission(
                                                 selectedImageUri,
                                                 Intent.FLAG_GRANT_READ_URI_PERMISSION
                                         );
-                                        Log.d(TAG, "Successfully took persistable READ URI permission for: " + selectedImageUri);
-                                    } else {
-                                        Log.d(TAG, "URI scheme (" + selectedImageUri.getScheme() + ") does not support persistable permissions. Skipping takePersistableUriPermission.");
                                     }
-                                } else {
-                                    Log.d(TAG, "FLAG_GRANT_READ_URI_PERMISSION not set in intent flags for: " + selectedImageUri + ". Persistable permission not taken.");
                                 }
                             } catch (SecurityException e) {
-                                Log.e(TAG, "SecurityException taking persistable URI permission for: " + selectedImageUri, e);
-                                // This might not be fatal for immediate use, but good to log.
+                                Log.e(TAG, "SecurityException taking persistable URI permission", e);
                             }
-
-                            Glide.with(ProfileActivity.this)
-                                    .load(selectedImageUri)
-                                    .placeholder(R.drawable.profile_pic)
-                                    .error(R.drawable.profile_pic)
+                            Glide.with(ProfileActivity.this).load(selectedImageUri)
+                                    .placeholder(R.drawable.profile_pic).error(R.drawable.profile_pic)
                                     .into(profilePictureImageView);
-                            Toast.makeText(this, "Image selected. Click 'Update' to save.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Image selected. Click 'Update' to save.", Toast.LENGTH_SHORT).show();
                         } else {
-                            selectedImageUri = null; // Reset if data or URI is null
-                            Log.w(TAG, "Gallery data or URI is null.");
+                            selectedImageUri = null; // Reset if no data
                         }
                     } else {
-                        selectedImageUri = null; // Reset if selection is cancelled or failed
-                        Log.w(TAG, "Gallery selection cancelled or failed. Result code: " + result.getResultCode());
+                        selectedImageUri = null; // Reset if cancelled
                     }
                 });
 
         icPlusImageView.setOnClickListener(v -> checkPermissionAndOpenGallery());
         updateButton.setOnClickListener(v -> updateUserProfile());
-
-        aboutButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, AboutActivity.class);
-            startActivity(intent);
-        });
-
+        aboutButton.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, AboutActivity.class)));
         logOutButton.setOnClickListener(v -> {
             mAuth.signOut();
             navigateToLogin();
@@ -166,7 +166,13 @@ public class ProfileActivity extends BaseActivity {
 
     private void loadUserProfile() {
         if (currentUser == null) return;
-        emailEditText.setText(currentUser.getEmail());
+
+        originalEmailFromAuth = currentUser.getEmail(); // Store initial Auth email
+        if (originalEmailFromAuth != null) {
+            emailEditText.setText(originalEmailFromAuth);
+        } else {
+            emailEditText.setHint("No email associated with login.");
+        }
 
         DocumentReference userDocRef = db.collection("users").document(currentUser.getUid());
         userDocRef.get().addOnSuccessListener(documentSnapshot -> {
@@ -174,37 +180,123 @@ public class ProfileActivity extends BaseActivity {
                 String firstName = documentSnapshot.getString("firstName");
                 String lastName = documentSnapshot.getString("lastName");
                 if (firstName != null && lastName != null) {
-                    nameEditText.setText(String.format("%s %s", firstName, lastName));
+                    originalFullName = String.format("%s %s", firstName, lastName);
                 } else if (firstName != null) {
-                    nameEditText.setText(firstName);
+                    originalFullName = firstName;
                 } else {
-                    nameEditText.setText("");
+                    originalFullName = ""; // Default if parts are missing
                 }
+                nameEditText.setText(originalFullName);
 
                 String profilePicUrl = documentSnapshot.getString("profilePictureUrl");
                 if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
-                    Glide.with(this)
-                            .load(profilePicUrl)
-                            .placeholder(R.drawable.profile_pic)
-                            .error(R.drawable.profile_pic)
+                    Glide.with(this).load(profilePicUrl)
+                            .placeholder(R.drawable.profile_pic).error(R.drawable.profile_pic)
                             .into(profilePictureImageView);
                 } else {
-                    profilePictureImageView.setImageResource(R.drawable.profile_pic); // Default if no URL
+                    profilePictureImageView.setImageResource(R.drawable.profile_pic);
                 }
             } else {
-                Log.d(TAG, "No such document for user details in Firestore. Checking Auth display name.");
+                Log.w(TAG, "User document does not exist in Firestore.");
+                // Fallback to Firebase Auth display name if Firestore doc doesn't exist
                 if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
-                    nameEditText.setText(currentUser.getDisplayName());
+                    originalFullName = currentUser.getDisplayName();
                 } else {
-                    nameEditText.setText("");
+                    originalFullName = "";
                 }
-                profilePictureImageView.setImageResource(R.drawable.profile_pic); // Default if no Firestore doc
+                nameEditText.setText(originalFullName);
+                profilePictureImageView.setImageResource(R.drawable.profile_pic); // Default image
             }
         }).addOnFailureListener(e -> {
             Log.e(TAG, "Error fetching user details from Firestore", e);
             Toast.makeText(ProfileActivity.this, "Failed to load profile details.", Toast.LENGTH_SHORT).show();
-            profilePictureImageView.setImageResource(R.drawable.profile_pic); // Default on failure
+            // Fallback: Use display name from Auth if available
+            if (currentUser.getDisplayName() != null) {
+                nameEditText.setText(currentUser.getDisplayName());
+            }
         });
+    }
+
+    private synchronized void operationCompleted(boolean success, String fieldName) {
+        pendingOperations--;
+        if (success && fieldName != null) {
+            if (!successfulUpdates.contains(fieldName)) {
+                successfulUpdates.add(fieldName);
+            }
+        }
+        Log.d(TAG, "Operation completed. Pending: " + pendingOperations + ", Successes: " + successfulUpdates.size() + (success ? " (" + fieldName + " success)" : " (failure)"));
+
+        if (pendingOperations == 0) {
+            if (!successfulUpdates.isEmpty()) {
+                if (successfulUpdates.size() > 1) {
+                    Toast.makeText(ProfileActivity.this, "Profile details updated!", Toast.LENGTH_LONG).show();
+                } else if (successfulUpdates.size() == 1) {
+                    String updatedField = successfulUpdates.get(0);
+                    if ("Email".equals(updatedField)) {
+                        Toast.makeText(ProfileActivity.this, "Email changed successfully!", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(ProfileActivity.this, updatedField + " updated successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                // Refresh the current user data after all operations
+                if (mAuth.getCurrentUser() != null) {
+                    currentUser = mAuth.getCurrentUser();
+                    // Specifically update the email field in the UI from the latest currentUser state
+                    if (successfulUpdates.contains("Email")) {
+                        originalEmailFromAuth = currentUser.getEmail(); // Update our original reference
+                    }
+                    emailEditText.setText(currentUser.getEmail() != null ? currentUser.getEmail() : "");
+                    if (successfulUpdates.contains("Name")) {
+                        // originalFullName should have been updated upon successful name change in updateUserProfile
+                        nameEditText.setText(originalFullName);
+                    }
+                }
+            } else {
+                Log.d(TAG, "All operations finished, but no successful updates recorded or all failed.");
+                // Revert email if it was an attempted change that failed and isn't already reverted
+                if (currentUser != null && originalEmailFromAuth != null && !emailEditText.getText().toString().equals(originalEmailFromAuth)
+                        && !successfulUpdates.contains("Email")) {
+                    emailEditText.setText(originalEmailFromAuth);
+                }
+            }
+            successfulUpdates.clear();
+            // Clear password fields for security after operations
+            newPasswordEditText.setText("");
+            currentPasswordEditText.setText("");
+            selectedImageUri = null; // Reset selected image URI
+        }
+    }
+
+
+    private void reauthenticateAndPerformSensitiveOperation(String currentPassword, String operationType, Runnable operation) {
+        if (currentUser == null || currentUser.getEmail() == null) {
+            Toast.makeText(this, "User not properly logged in.", Toast.LENGTH_SHORT).show();
+            operationCompleted(false, operationType); // Pass operationType to correctly decrement if needed
+            return;
+        }
+
+        if (TextUtils.isEmpty(currentPassword)) {
+            currentPasswordEditText.setError("Current password is required to change " + operationType.toLowerCase() + ".");
+            currentPasswordEditText.requestFocus();
+            Toast.makeText(this, "Current password is required to change " + operationType.toLowerCase() + ".", Toast.LENGTH_LONG).show();
+            operationCompleted(false, operationType);
+            return;
+        }
+        currentPasswordEditText.setError(null);
+
+        AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
+        currentUser.reauthenticate(credential)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "User re-authenticated successfully for " + operationType + " update.");
+                    operation.run(); // Execute the sensitive operation
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Re-authentication failed for " + operationType + " update.", e);
+                    currentPasswordEditText.setError("Incorrect current password.");
+                    currentPasswordEditText.requestFocus();
+                    Toast.makeText(ProfileActivity.this, "Re-authentication failed. Check current password.", Toast.LENGTH_LONG).show();
+                    operationCompleted(false, operationType);
+                });
     }
 
     private void updateUserProfile() {
@@ -213,173 +305,222 @@ public class ProfileActivity extends BaseActivity {
             return;
         }
 
-        String fullName = Objects.requireNonNull(nameEditText.getText()).toString().trim();
-        String newPassword = Objects.requireNonNull(newPasswordEditText.getText()).toString().trim();
-        boolean detailsAttemptedUpdate = false;
+        // Reset errors and pending operations
+        pendingOperations = 0;
+        successfulUpdates.clear();
+        nameEditText.setError(null);
+        emailEditText.setError(null);
+        newPasswordEditText.setError(null);
+        currentPasswordEditText.setError(null);
 
-        // Update Name in Firestore
-        if (!TextUtils.isEmpty(fullName)) {
-            // It might be good to compare with current name to avoid unnecessary updates
+        String fullName = Objects.requireNonNull(nameEditText.getText()).toString().trim();
+        String newAuthEmail = Objects.requireNonNull(emailEditText.getText()).toString().trim();
+        String newPassword = Objects.requireNonNull(newPasswordEditText.getText()).toString().trim();
+        String currentPassword = Objects.requireNonNull(currentPasswordEditText.getText()).toString();
+
+        boolean anyFieldModified = false;
+
+        // --- Update Name in Firestore ---
+        if (!TextUtils.isEmpty(fullName) && !fullName.equals(originalFullName)) {
+            anyFieldModified = true;
+            pendingOperations++;
             String[] nameParts = fullName.split("\\s+", 2);
             String firstName = nameParts.length > 0 ? nameParts[0] : "";
             String lastName = nameParts.length > 1 ? nameParts[1] : "";
-
             DocumentReference userDocRef = db.collection("users").document(currentUser.getUid());
             Map<String, Object> nameUpdates = new HashMap<>();
             nameUpdates.put("firstName", firstName);
             nameUpdates.put("lastName", lastName);
-
+            final String attemptedFullName = fullName; // For closure
             userDocRef.update(nameUpdates)
-                    .addOnSuccessListener(aVoid -> Log.d(TAG, "User name updated in Firestore."))
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "User name updated in Firestore.");
+                        originalFullName = attemptedFullName; // Update originalFullName on success
+                        operationCompleted(true, "Name");
+                    })
                     .addOnFailureListener(e -> {
                         Log.e(TAG, "Error updating name in Firestore", e);
                         Toast.makeText(ProfileActivity.this, "Failed to update name.", Toast.LENGTH_SHORT).show();
+                        operationCompleted(false, "Name");
                     });
-            detailsAttemptedUpdate = true;
         }
 
-        // Update Password in Firebase Auth
-        if (!TextUtils.isEmpty(newPassword)) {
-            currentUser.updatePassword(newPassword)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User password updated successfully.");
-                            newPasswordEditText.setText(""); // Clear field after successful update
-                            // Toast for password update can be combined or separate
-                        } else {
-                            Log.e(TAG, "Error updating password", task.getException());
-                            Toast.makeText(ProfileActivity.this, "Failed to update password: " +
-                                            (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-            detailsAttemptedUpdate = true;
-        }
+        // --- Update Firebase Authentication Email ---
+        boolean authEmailChanged = !TextUtils.isEmpty(newAuthEmail) && originalEmailFromAuth != null && !newAuthEmail.equalsIgnoreCase(originalEmailFromAuth);
 
-        // Upload Profile Picture if a new one is selected
-        if (selectedImageUri != null) {
-            uploadProfilePictureToCloudinary(selectedImageUri);
-            detailsAttemptedUpdate = true; // Image upload itself is an update attempt.
-        } else {
-            // If only name/password changed and no new image
-            if (detailsAttemptedUpdate) {
-                // A general success message if other details were updated and no image was chosen.
-                // Specific toasts for name/password success/failure are handled above.
-                Toast.makeText(ProfileActivity.this, "Profile update process started.", Toast.LENGTH_SHORT).show();
+        if (authEmailChanged) {
+            anyFieldModified = true;
+            pendingOperations++;
+            Log.d(TAG, "Attempting to update Firebase Auth email. Pending ops: " + pendingOperations);
+
+            if (!isValidEmail(newAuthEmail)) {
+                emailEditText.setError("Please enter a valid email address.");
+                emailEditText.requestFocus();
+                operationCompleted(false, "Email");
             } else {
-                Toast.makeText(ProfileActivity.this, "No changes to update.", Toast.LENGTH_SHORT).show();
+                emailEditText.setError(null);
+                reauthenticateAndPerformSensitiveOperation(currentPassword, "Email", () -> {
+                    currentUser.updateEmail(newAuthEmail)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Firebase Auth email update initiated. Verification email sent to " + newAuthEmail);
+                                    operationCompleted(true, "Email");
+                                } else {
+                                    Log.e(TAG, "Error updating Firebase Auth email", task.getException());
+                                    String emailErrorMessage = "Failed to update email.";
+                                    if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
+                                        emailErrorMessage = "Security check: Enter current password to update email.";
+                                        currentPasswordEditText.requestFocus(); // Should already be focused by reauth logic
+                                    } else if (task.getException() != null && task.getException().getMessage() != null &&
+                                            task.getException().getMessage().contains("EMAIL_EXISTS")) {
+                                        emailErrorMessage = "This email address is already in use.";
+                                        emailEditText.setError(emailErrorMessage);
+                                        emailEditText.requestFocus();
+                                    } else if (task.getException() != null && task.getException().getMessage() != null) {
+                                        emailErrorMessage = "Failed to update email: " + task.getException().getMessage();
+                                    }
+                                    Toast.makeText(ProfileActivity.this, emailErrorMessage, Toast.LENGTH_LONG).show();
+                                    emailEditText.setText(originalEmailFromAuth); // Revert UI
+                                    operationCompleted(false, "Email");
+                                }
+                            });
+                });
             }
+        }
+
+        // --- Update Password in Firebase Auth ---
+        if (!TextUtils.isEmpty(newPassword)) {
+            anyFieldModified = true;
+            pendingOperations++;
+            Log.d(TAG, "Attempting to update Firebase Auth password. Pending ops: " + pendingOperations);
+            if (newPassword.length() < 6) {
+                newPasswordEditText.setError("Password must be at least 6 characters.");
+                newPasswordEditText.requestFocus();
+                operationCompleted(false, "Password");
+            } else {
+                newPasswordEditText.setError(null);
+                reauthenticateAndPerformSensitiveOperation(currentPassword, "Password", () -> {
+                    currentUser.updatePassword(newPassword)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User password updated successfully.");
+                                    operationCompleted(true, "Password");
+                                } else {
+                                    Log.e(TAG, "Error updating password", task.getException());
+                                    String pwErrorMessage = "Failed to update password.";
+                                    if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
+                                        pwErrorMessage = "Security check: Enter current password to update password.";
+                                        currentPasswordEditText.requestFocus(); // Should already be focused
+                                    } else if (task.getException() != null && task.getException().getMessage() != null) {
+                                        pwErrorMessage = "Failed to update password: " + task.getException().getMessage();
+                                    }
+                                    Toast.makeText(ProfileActivity.this, pwErrorMessage, Toast.LENGTH_LONG).show();
+                                    operationCompleted(false, "Password");
+                                }
+                            });
+                });
+            }
+        }
+
+        // --- Upload Profile Picture ---
+        if (selectedImageUri != null) {
+            anyFieldModified = true;
+            pendingOperations++;
+            Log.d(TAG, "Attempting to upload profile picture. Pending ops: " + pendingOperations);
+            uploadProfilePictureToCloudinary(selectedImageUri);
+        }
+
+        // --- Handle case where no fields were modified or only validation errors exist ---
+        if (!anyFieldModified && pendingOperations == 0) {
+            boolean nameError = nameEditText.getError() != null;
+            boolean emailError = emailEditText.getError() != null;
+            boolean newPasswordError = newPasswordEditText.getError() != null;
+            boolean currentPasswordError = currentPasswordEditText.getError() != null;
+
+            if (!nameError && !emailError && !newPasswordError && !currentPasswordError && TextUtils.isEmpty(newPassword) && selectedImageUri == null) {
+                Toast.makeText(this, "No changes to update.", Toast.LENGTH_SHORT).show();
+            } else if (anyFieldModified) {
+                // This means some operation was started but failed very early (e.g. invalid new password length)
+                // The specific error toast would have already shown.
+            } else if (nameError || emailError || newPasswordError || currentPasswordError) {
+                Toast.makeText(this, "Please correct the errors before updating.", Toast.LENGTH_SHORT).show();
+            }
+        } else if (pendingOperations == 0 && anyFieldModified && successfulUpdates.isEmpty()) {
+            // This means operations were attempted but all failed.
+            // Specific error messages should have been shown by each operation.
+            Log.d(TAG, "All attempted operations failed.");
         }
     }
 
     private void uploadProfilePictureToCloudinary(Uri imageUri) {
-        Log.d(TAG, "uploadProfilePictureToCloudinary: URI: " + (imageUri != null ? imageUri.toString() : "null"));
-
-        if (currentUser == null) {
-            Toast.makeText(this, "Not logged in. Cannot upload picture.", Toast.LENGTH_SHORT).show();
-            return;
-        }
         if (imageUri == null) {
-            Toast.makeText(this, "No image selected to upload.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Image URI is null, cannot upload.");
+            operationCompleted(false, "Profile Picture");
             return;
         }
+        Log.d(TAG, "Uploading to Cloudinary: " + imageUri.toString());
 
-        // The problematic check that always triggered an error toast has been removed.
-        // It's assumed that CLOUDINARY_UPLOAD_PRESET is correctly set now.
-
-        // URI Validity Check using InputStream (good for content URIs)
-        try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
-            if (inputStream == null) { // Should not happen if openInputStream doesn't throw
-                Log.e(TAG, "Failed to open InputStream for URI: " + imageUri);
-                Toast.makeText(this, "Error: Could not access selected image file.", Toast.LENGTH_LONG).show();
-                return;
-            }
-            // InputStream is valid here, will be closed automatically by try-with-resources
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "FileNotFoundException for URI: " + imageUri, e);
-            Toast.makeText(this, "Error: Selected image file not found.", Toast.LENGTH_LONG).show();
-            return;
-        } catch (IOException e) { // Catch other IO issues during openInputStream or close
-            Log.e(TAG, "IOException for URI: " + imageUri, e);
-            Toast.makeText(this, "Error: Could not read selected image.", Toast.LENGTH_LONG).show();
-            return;
-        } catch (SecurityException e) { // Catch SecurityException if URI access is denied
-            Log.e(TAG, "SecurityException opening InputStream for URI: " + imageUri, e);
-            Toast.makeText(this, "Error: Permission denied for the selected image.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-
-        Toast.makeText(ProfileActivity.this, "Uploading profile picture...", Toast.LENGTH_SHORT).show();
-
-        MediaManager.get().upload(imageUri)
-                .unsigned(CLOUDINARY_UPLOAD_PRESET) // This now uses your actual preset na
-                .option("folder", "android_uploads/profile_pictures/" + currentUser.getUid()) // Optional: organize in Cloudinary
-               // .option("transformation", new com.cloudinary.Transformation().width(400).height(400).crop("fill").gravity("face")) // Optional: transform
+        // Ensure MediaManager is initialized (usually in Application class)
+        // MediaManager.get().upload(imageUri)...
+        String requestId = MediaManager.get().upload(imageUri)
+                .unsigned(CLOUDINARY_UPLOAD_PRESET) // Use your upload preset
+                .option("folder", "profile_pictures") // Optional: specify a folder
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
-                        Log.d(TAG, "Cloudinary upload started. ID: " + requestId);
-                        // You might want to show a progress bar here
+                        Log.d(TAG, "Cloudinary upload started: " + requestId);
+                        // Show progress dialog or similar
                     }
 
                     @Override
                     public void onProgress(String requestId, long bytes, long totalBytes) {
-                        // Log.d(TAG, "Cloudinary upload progress: " + (bytes * 100 / totalBytes) + "%");
-                        // Update progress bar
+                        // Update progress if needed
                     }
 
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
-                        Log.d(TAG, "Cloudinary upload successful. Result: " + resultData);
-                        // Hide progress bar
-                        String cloudinaryUrl = (String) resultData.get("secure_url"); // Prefer secure_url
-                        if (cloudinaryUrl == null) {
-                            cloudinaryUrl = (String) resultData.get("url"); // Fallback to url
+                        Log.d(TAG, "Cloudinary upload success: " + resultData);
+                        String imageUrl = (String) resultData.get("secure_url");
+                        if (imageUrl == null) {
+                            imageUrl = (String) resultData.get("url");
                         }
 
-                        if (cloudinaryUrl != null && !cloudinaryUrl.isEmpty()) {
-                            final String finalCloudinaryUrl = cloudinaryUrl;
-                            // Save this URL to Firestore
+                        if (imageUrl != null && currentUser != null) {
                             db.collection("users").document(currentUser.getUid())
-                                    .update("profilePictureUrl", finalCloudinaryUrl)
+                                    .update("profilePictureUrl", imageUrl)
                                     .addOnSuccessListener(aVoid -> {
-                                        Log.d(TAG, "Profile picture URL updated in Firestore: " + finalCloudinaryUrl);
-                                        Toast.makeText(ProfileActivity.this, "Profile picture updated!", Toast.LENGTH_SHORT).show();
-                                        selectedImageUri = null; // Clear selected image after successful upload and save
-                                        // Update ImageView with the new image from Cloudinary
-                                        Glide.with(ProfileActivity.this)
-                                                .load(finalCloudinaryUrl)
-                                                .placeholder(R.drawable.profile_pic) // Optional
-                                                .error(R.drawable.profile_pic)       // Optional
-                                                .into(profilePictureImageView);
+                                        Log.d(TAG, "Profile picture URL updated in Firestore.");
+                                        selectedImageUri = null; // Clear after successful upload
+                                        operationCompleted(true, "Profile Picture");
                                     })
                                     .addOnFailureListener(e -> {
-                                        Log.e(TAG, "Error updating profile picture URL in Firestore.", e);
-                                        Toast.makeText(ProfileActivity.this, "Uploaded, but failed to save URL to database.", Toast.LENGTH_LONG).show();
+                                        Log.e(TAG, "Error updating profile picture URL in Firestore", e);
+                                        Toast.makeText(ProfileActivity.this, "Failed to save picture URL.", Toast.LENGTH_SHORT).show();
+                                        operationCompleted(false, "Profile Picture");
                                     });
                         } else {
-                            Log.e(TAG, "Cloudinary URL is null/empty from resultData.");
-                            Toast.makeText(ProfileActivity.this, "Upload succeeded but failed to get image URL.", Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "Cloudinary URL is null or user is null after upload.");
+                            Toast.makeText(ProfileActivity.this, "Failed to get image URL.", Toast.LENGTH_SHORT).show();
+                            operationCompleted(false, "Profile Picture");
                         }
                     }
 
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
-                        Log.e(TAG, "Cloudinary upload error. ID: " + requestId + ", Error: " + error.getDescription() + " (Code: " + error.getCode() + ")");
-                        // Hide progress bar
+                        Log.e(TAG, "Cloudinary upload error: " + error.getDescription());
                         Toast.makeText(ProfileActivity.this, "Image upload failed: " + error.getDescription(), Toast.LENGTH_LONG).show();
+                        operationCompleted(false, "Profile Picture");
                     }
 
                     @Override
                     public void onReschedule(String requestId, ErrorInfo error) {
-                        Log.w(TAG, "Cloudinary upload rescheduled. ID: " + requestId + ", Error: " + error.getDescription());
-                        // Hide progress bar
-                        Toast.makeText(ProfileActivity.this, "Upload rescheduled: " + error.getDescription(), Toast.LENGTH_LONG).show();
+                        Log.w(TAG, "Cloudinary upload rescheduled: " + error.getDescription());
+                        // Handle reschedule if necessary
                     }
                 })
-                .dispatch(); // Don't forget to dispatch the request
+                .dispatch(); // Don't forget to dispatch
     }
+
 
     private void checkPermissionAndOpenGallery() {
         String permission;
@@ -392,20 +533,17 @@ public class ProfileActivity extends BaseActivity {
         if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
             openGallery();
         } else {
-            // Request permission
             ActivityCompat.requestPermissions(this, new String[]{permission}, READ_STORAGE_PERMISSION_REQUEST_CODE);
         }
     }
 
     private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // intent.setType("image/*"); // This is redundant with MediaStore.Images.Media.EXTERNAL_CONTENT_URI for ACTION_PICK
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            galleryLauncher.launch(intent);
-        } else {
-            Toast.makeText(this, "No gallery app found.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "No activity found to handle image picking intent.");
-        }
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); // More robust for persistent access
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION); // For persistent access
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        galleryLauncher.launch(intent);
     }
 
     @Override
@@ -415,7 +553,7 @@ public class ProfileActivity extends BaseActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openGallery();
             } else {
-                Toast.makeText(this, "Storage permission denied.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Storage permission is required to select images.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -424,14 +562,21 @@ public class ProfileActivity extends BaseActivity {
         Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish(); // Finish ProfileActivity so user can't go back to it without logging in
+        finish();
     }
 
-    // Ensure setupNavigationBar() is correctly defined in BaseActivity or this class if needed.
-    // protected void setupNavigationBar() {
-    //     // Example: if it's not in BaseActivity
-    //     // BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view); // Assuming you have one
-    //     // bottomNavigationView.setOnItemSelectedListener(item -> { /* handle navigation */ return true; });
-    //     Log.d(TAG, "setupNavigationBar called - ensure implementation if used.");
+    // Ensure MyApplication class is set up for Cloudinary MediaManager initialization
+    // Example:
+    // public class MyApplication extends Application {
+    //     @Override
+    //     public void onCreate() {
+    //         super.onCreate();
+    //         Map config = new HashMap();
+    //         config.put("cloud_name", "YOUR_CLOUD_NAME");
+    //         config.put("api_key", "YOUR_API_KEY"); // Optional, if not using unsigned uploads
+    //         config.put("api_secret", "YOUR_API_SECRET"); // Optional, if not using unsigned uploads
+    //         MediaManager.init(this, config);
+    //     }
     // }
+    // And in AndroidManifest.xml: <application android:name=".MyApplication" ... >
 }
