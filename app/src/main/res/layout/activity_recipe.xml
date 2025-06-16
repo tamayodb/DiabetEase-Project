@@ -5,44 +5,53 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeActivity"
-    tools:layout_editor_absoluteX="-8dp"
-    tools:layout_editor_absoluteY="14dp">
+    tools:context=".RecipeActivity">
 
-    <!-- Menu Icon -->
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topMenu"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
-        android:contentDescription="@string/menuicon"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/menu_icon" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- "Recipe" Title -->
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/menu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- "Select Ingredients" Subtitle -->
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="@string/recipe"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView8"
+            app:layout_constraintStart_toEndOf="@+id/imageView8"
+            app:layout_constraintTop_toTopOf="@+id/imageView8" />
 
-    <!-- Description Text -->
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- FRUIT BUTTON -->
-
-    <TextView
-        android:id="@+id/textView18"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="5dp"
-        android:fontFamily="@font/poppins_medium"
-        android:text="@string/recipe"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView8"
-        app:layout_constraintStart_toEndOf="@+id/imageView8"
-        app:layout_constraintTop_toTopOf="@+id/imageView8"
-        app:layout_constraintVertical_bias="1.0" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topMenu">
 
     <TextView
         android:id="@+id/textView20"
@@ -55,7 +64,7 @@
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+        app:layout_constraintTop_toBottomOf="@+id/topMenu" />
 
     <TextView
         android:id="@+id/textView23"
@@ -69,7 +78,6 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
@@ -111,7 +119,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vegetable_button" />
 
-    <!-- Navigation Bar Container - Overlaid on content -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/continue_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_recipe_con"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Generate Food Recipe"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="373dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <FrameLayout
         android:id="@+id/navigationBarContainer"
         android:layout_width="0dp"
@@ -126,31 +152,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </FrameLayout>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/continue_button"
-        android:layout_width="380dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_recipe_con"
-        android:text="Generate Food Recipe"
-        android:textStyle="normal"
-        android:fontFamily="@font/poppins_medium"
-        android:textColor="@color/white"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView23"
-        app:layout_constraintVertical_bias="0.64" />
-
-<!--    <TextView-->
-<!--        android:id="@+id/selected_items_text"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Selected items will appear here"-->
-<!--        android:textSize="16sp"-->
-<!--        android:padding="8dp" />-->
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
