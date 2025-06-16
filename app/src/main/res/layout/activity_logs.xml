@@ -112,10 +112,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="0dp"
         android:layout_marginEnd="30dp"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/day_navigation">
@@ -150,27 +149,31 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:fontFamily="@font/poppins_medium"
+            android:freezesText="false"
             android:text="Edit"
             android:textAlignment="textEnd"
             android:textColor="#0468FF"
             android:textSize="12sp" />
 
     </LinearLayout>
+
     <Button
         android:id="@+id/log_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="468dp"
         android:layout_marginEnd="30dp"
         android:backgroundTint="#0468FF"
         android:fontFamily="@font/poppins_medium"
-        android:text="Log Glucose Level Today"
+        android:gravity="center"
+        android:text="Log Glucose Level Todayi"
         app:icon="@drawable/ic_plus"
+        app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/glucoseBarChart"
+        app:layout_constraintVertical_bias="0.018" />
 
     <LinearLayout
         android:id="@+id/week_navigation"
@@ -183,8 +186,10 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/glucoseBarChart"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/today_reading">
+        app:layout_constraintTop_toBottomOf="@+id/today_reading"
+        app:layout_constraintVertical_bias="0.0">
 
         <!-- Previous Week Button -->
         <ImageButton
@@ -223,189 +228,214 @@
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:layout_margin="20dp"
+        android:layout_marginTop="71dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/log_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.285"
+        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/today_reading"
+        app:layout_constraintVertical_bias="0.16" />
 
-
-    <androidx.gridlayout.widget.GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:alignmentMode="alignMargins"
-        android:columnCount="2"
-        android:padding="16dp"
-        android:rowCount="2"
-        android:rowOrderPreserved="false"
-        android:useDefaultMargins="true"
-        app:layout_constraintBottom_toTopOf="@+id/navigationBarContainer"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/statistics"
+        android:layout_width="378dp"
+        android:layout_height="231dp"
+        android:background="#FFFFFF"
+        android:padding="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/log_button"
-        tools:layout_editor_absoluteX="76dp">
+        app:layout_constraintVertical_bias="0.0">
 
-        <!-- Card: Average -->
+        <!-- Average -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_average"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:cardUseCompatPadding="true">
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toStartOf="@+id/card_yesterday"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.48">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <TextView
+                    android:id="@+id/text_average"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="⏱ Average"
-                    android:textColor="#4C545B"
-                    android:textSize="14sp" />
+                    android:text="Average"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/average_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_extrabold"
                     android:text="185"
-                    android:textColor="#007BFF"
-                    android:textSize="24sp" />
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Mg/dL"
-                    android:textColor="#007BFF"
+                    android:textColor="#0071FF"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Yesterday -->
+        <!-- Yesterday -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_yesterday"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_row="0"
-            android:layout_column="1"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:cardUseCompatPadding="true">
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/card_average"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.48">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_width="175dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <TextView
+                    android:id="@+id/text_yesterday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="📅 Yesterday"
-                    android:textColor="#4C545B"
-                    android:textSize="14sp" />
+                    android:text="Yesterday"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/yesterday_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_extrabold"
                     android:text="185"
-                    android:textColor="#007BFF"
-                    android:textSize="24sp" />
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Mg/dL"
-                    android:textColor="#007BFF"
+                    android:textColor="#0071FF"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Lowest -->
+        <!-- Lowest -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_lowest"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
+            android:layout_marginTop="5dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:cardUseCompatPadding="true">
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toStartOf="@+id/card_highest"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_average"
+            app:layout_constraintWidth_percent="0.48">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <TextView
+                    android:id="@+id/text_lowest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="🔽 Lowest"
-                    android:textColor="#4C545B"
-                    android:textSize="14sp" />
+                    android:text="Lowest"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/lowest_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_extrabold"
                     android:text="185"
-                    android:textColor="#007BFF"
-                    android:textSize="24sp" />
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Mg/dL"
-                    android:textColor="#007BFF"
+                    android:textColor="#0071FF"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Highest -->
+        <!-- Highest -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_highest"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_row="1"
-            android:layout_column="1"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
+            android:layout_marginTop="5dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:cardUseCompatPadding="true">
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/card_lowest"
+            app:layout_constraintTop_toBottomOf="@id/card_yesterday"
+            app:layout_constraintWidth_percent="0.48">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="10dp">
 
                 <TextView
+                    android:id="@+id/text_highest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
-                    android:text="🔼 Highest"
-                    android:textColor="#4C545B"
-                    android:textSize="14sp" />
+                    android:text="Highest"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/highest_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_extrabold"
                     android:text="185"
-                    android:textColor="#007BFF"
-                    android:textSize="24sp" />
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins_regular"
                     android:text="Mg/dL"
-                    android:textColor="#007BFF"
+                    android:textColor="#0071FF"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-    </androidx.gridlayout.widget.GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/navigationBarContainer"
