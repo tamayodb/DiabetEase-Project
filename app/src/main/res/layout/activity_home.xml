@@ -64,7 +64,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <!-- ProgressBar Centered -->
     <ProgressBar
@@ -138,6 +140,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -184,7 +188,6 @@
 
     </LinearLayout>
 
-
     <!-- Navigation Bar Container -->
     <FrameLayout
         android:id="@+id/navigationBarContainer"
@@ -201,4 +204,6 @@
             android:layout_height="wrap_content" />
     </FrameLayout>
 
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

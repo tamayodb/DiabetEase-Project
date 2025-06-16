@@ -2,6 +2,7 @@ package com.example.diabetease;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -52,12 +53,12 @@ import java.util.TimeZone;
 
 public class LogsActivity extends BaseActivity {
 
-    private Button logButton, editLogButton, historyButton;
+    private Button logButton, editLogButton;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
 
     private TextView averageNum, yesterdayNum, lowestNum, highestNum, currentDayText, loggedTodayTextView;
-    private TextView weekRangeText;
+    private TextView weekRangeText, todayButton, historyButton;
     private ImageButton prevWeekButton, nextWeekButton;
 
     private int currentWeekOffset = 0;
@@ -83,7 +84,7 @@ public class LogsActivity extends BaseActivity {
         setupBarChart();
 
         // Update to show today's correct date
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE MMM dd", Locale.getDefault());
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE, MMM dd", Locale.getDefault());
         dayFormat.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
         String formattedDay = dayFormat.format(new Date());
         currentDayText.setText(formattedDay);
@@ -95,8 +96,28 @@ public class LogsActivity extends BaseActivity {
         checkIfLoggedTodayAndToggleEditButton();
 
 
-        historyButton.setOnClickListener(view -> openGlucoseHistory());
+        todayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                todayButton.setBackgroundResource(R.drawable.toggle_selected);
+                todayButton.setTextColor(Color.WHITE);
 
+                historyButton.setBackgroundColor(Color.TRANSPARENT);
+            }
+        });
+
+        historyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                historyButton.setBackgroundResource(R.drawable.toggle_selected);
+                historyButton.setTextColor(Color.WHITE);
+
+                todayButton.setBackgroundColor(Color.TRANSPARENT);
+                todayButton.setTextColor(Color.parseColor("#202F3E"));
+
+                openGlucoseHistory();
+            }
+        });
     }
 
     private void initializeViews() {
@@ -112,7 +133,12 @@ public class LogsActivity extends BaseActivity {
         nextWeekButton = findViewById(R.id.next_week_button);
         currentDayText = findViewById(R.id.current_day_text);
         historyButton = findViewById(R.id.history_button);
+        todayButton = findViewById(R.id.today_button);
 
+        todayButton.setBackgroundResource(R.drawable.toggle_selected);
+        todayButton.setTextColor(Color.WHITE);
+
+        historyButton.setBackgroundColor(Color.TRANSPARENT);
     }
 
     private void setupWeekNavigation() {
