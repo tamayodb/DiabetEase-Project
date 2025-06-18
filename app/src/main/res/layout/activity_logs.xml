@@ -8,116 +8,188 @@
     android:background="@color/white"
     tools:context=".LogsActivity">
 
-    <!-- Bar Chart View -->
 
-    <!-- Navigation Bar -->
-
-    <include
-        android:id="@+id/navigation_bar"
-        layout="@layout/navigation_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/textView18"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topMenu"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="234dp"
-        android:fontFamily="@font/poppins_medium"
-        android:text="Track Glucose"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView9"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView9"
-        app:layout_constraintTop_toTopOf="@+id/imageView9" />
-
-    <TextView
-        android:id="@+id/current_day_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Thurs. May 1, 2025"
-        android:textColor="#4C545B"
-        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/today_button"
-        android:layout_width="70dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="18dp"
-        android:backgroundTint="#202F3E"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Today"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textSize="7sp"
-        app:layout_constraintEnd_toStartOf="@+id/history_button"
-        app:layout_constraintStart_toEndOf="@+id/current_day_text"
-        app:layout_constraintTop_toBottomOf="@+id/textView18" />
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/menu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/history_button"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="-14dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="32dp"
-        android:backgroundTint="#C8CDD6"
-        android:fontFamily="@font/poppins_regular"
-        android:text="History"
-        android:textSize="7sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/today_button"
-        app:layout_constraintTop_toBottomOf="@+id/textView18" />
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Track Glucose"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView9"
+            app:layout_constraintStart_toEndOf="@+id/imageView9"
+            app:layout_constraintTop_toTopOf="@+id/imageView9" />
 
-    <!-- LinearLayout for Previous Week, Week Range, Next Week BELOW BarChart -->
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/textView23"
-        android:layout_width="wrap_content"
+    <!-- Current day and navigation buttons -->
+    <LinearLayout
+        android:id="@+id/day_navigation"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="290dp"
-        android:fontFamily="@font/poppins_bold"
-        android:text="Mg/dL"
-        android:textColor="#0468FF"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/logged_today"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/logged_today"
-        app:layout_constraintTop_toTopOf="@+id/logged_today"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topMenu">
+
+        <TextView
+            android:id="@+id/current_day_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Thurs. May 1, 2025"
+            android:textColor="#4C545B"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:id="@+id/toggle_container"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:orientation="horizontal"
+            android:background="@drawable/toggle_unselected"
+            android:padding="2dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/topMenu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/today_button"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/toggle_selected"
+                android:gravity="center"
+                android:text="Today"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_medium" />
+
+            <TextView
+                android:id="@+id/history_button"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:text="History"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins_medium" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Today's glucose reading -->
+    <LinearLayout
+        android:id="@+id/today_reading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/day_navigation">
+
+        <TextView
+            android:id="@+id/logged_today"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_extrabold"
+            android:text="000.0"
+            android:textColor="#0468FF"
+            android:textSize="35sp" />
+
+        <TextView
+            android:id="@+id/textView23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Mg/dL"
+            android:textColor="#0468FF"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/edit_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:fontFamily="@font/poppins_medium"
+            android:freezesText="false"
+            android:text="Edit"
+            android:textAlignment="textEnd"
+            android:textColor="#0468FF"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/log_button"
-        android:layout_width="370dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="468dp"
-        android:layout_marginEnd="21dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:backgroundTint="#0468FF"
         android:fontFamily="@font/poppins_medium"
-        android:text="Log Glucose Level Today"
+        android:gravity="center"
+        android:text="Log Glucose Level Todayi"
         app:icon="@drawable/ic_plus"
+        app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/glucoseBarChart"
+        app:layout_constraintVertical_bias="0.018" />
 
     <LinearLayout
         android:id="@+id/week_navigation"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/glucoseBarChart"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" >
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/today_reading"
+        app:layout_constraintVertical_bias="0.0">
 
         <!-- Previous Week Button -->
         <ImageButton
@@ -155,201 +227,229 @@
         android:id="@+id/glucoseBarChart"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_margin="16dp"
+        android:layout_margin="20dp"
+        android:layout_marginTop="71dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/log_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/today_reading"
+        app:layout_constraintVertical_bias="0.16" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/statistics"
+        android:layout_width="378dp"
+        android:layout_height="231dp"
+        android:background="#FFFFFF"
+        android:padding="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/navigationBarContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.884" />
+        app:layout_constraintTop_toBottomOf="@+id/log_button"
+        app:layout_constraintVertical_bias="0.0">
 
-    <ImageView
-        android:id="@+id/imageView9"
-        android:layout_width="wrap_content"
+        <!-- Average -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_average"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toStartOf="@+id/card_yesterday"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.48">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/text_average"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Average"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/average_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="185"
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Mg/dL"
+                    android:textColor="#0071FF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Yesterday -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_yesterday"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/card_average"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.48">
+
+            <LinearLayout
+                android:layout_width="175dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/text_yesterday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Yesterday"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/yesterday_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="185"
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Mg/dL"
+                    android:textColor="#0071FF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Lowest -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_lowest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toStartOf="@+id/card_highest"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_average"
+            app:layout_constraintWidth_percent="0.48">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/text_lowest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Lowest"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/lowest_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="185"
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Mg/dL"
+                    android:textColor="#0071FF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Highest -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_highest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/card_lowest"
+            app:layout_constraintTop_toBottomOf="@id/card_yesterday"
+            app:layout_constraintWidth_percent="0.48">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/text_highest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Highest"
+                    android:textColor="#202F3E"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/highest_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_extrabold"
+                    android:text="185"
+                    android:textColor="#0071FF"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Mg/dL"
+                    android:textColor="#0071FF"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/navigationBarContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/textView18"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/menu_icon" />
-
-    <TextView
-        android:id="@+id/logged_today"
-        android:layout_width="77dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/poppins_extrabold"
-        android:text="000.0"
-        android:textAlignment="textEnd"
-        android:textColor="#0468FF"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView23"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_day_text" />
-
-    <TextView
-        android:id="@+id/textView26"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Average"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/average_num"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/log_button" />
-
-    <TextView
-        android:id="@+id/average_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="6dp"
-        android:fontFamily="@font/poppins_extrabold"
-        android:text="000.00"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView28"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView26" />
-
-    <TextView
-        android:id="@+id/lowest_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="6dp"
-        android:fontFamily="@font/poppins_extrabold"
-        android:text="000.00"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView33"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView32" />
-
-    <TextView
-        android:id="@+id/highest_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:fontFamily="@font/poppins_extrabold"
-        android:text="000.00"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView36"
-        app:layout_constraintTop_toBottomOf="@+id/textView35" />
-
-    <TextView
-        android:id="@+id/textView28"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="96dp"
-        android:text="Mg/dL"
-        app:layout_constraintBottom_toBottomOf="@+id/average_num"
-        app:layout_constraintEnd_toStartOf="@+id/yesterday_num"
-        app:layout_constraintStart_toEndOf="@+id/average_num"
-        app:layout_constraintTop_toTopOf="@+id/average_num"
-        app:layout_constraintVertical_bias="0.479" />
-
-    <TextView
-        android:id="@+id/textView33"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="96dp"
-        android:text="Mg/dL"
-        app:layout_constraintBottom_toBottomOf="@+id/lowest_num"
-        app:layout_constraintEnd_toStartOf="@+id/highest_num"
-        app:layout_constraintStart_toEndOf="@+id/lowest_num"
-        app:layout_constraintTop_toTopOf="@+id/lowest_num"
-        app:layout_constraintVertical_bias="0.479" />
-
-    <TextView
-        android:id="@+id/textView36"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="46dp"
-        android:text="Mg/dL"
-        app:layout_constraintBottom_toBottomOf="@+id/highest_num"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/highest_num" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:id="@+id/textView31"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="46dp"
-        android:text="Mg/dL"
-        app:layout_constraintBottom_toBottomOf="@+id/yesterday_num"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/yesterday_num" />
-
-    <TextView
-        android:id="@+id/textView29"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="80dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Yesterday"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/yesterday_num"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/log_button" />
-
-    <TextView
-        android:id="@+id/yesterday_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:fontFamily="@font/poppins_extrabold"
-        android:text="000.00"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView31"
-        app:layout_constraintTop_toBottomOf="@+id/textView29" />
-
-    <TextView
-        android:id="@+id/textView32"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="34dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="1dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Lowest"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/lowest_num"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/average_num" />
-
-    <TextView
-        android:id="@+id/textView35"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="100dp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Highest"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/highest_num"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/yesterday_num" />
-
-    <Button
-        android:id="@+id/edit_log"
-        android:layout_width="87dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="200dp"
-        android:layout_marginBottom="50dp"
-        android:backgroundTint="#FFFFFF"
-        android:fontFamily="@font/poppins_medium"
-        android:text="Edit"
-        android:textColor="#0468FF"
-        android:textSize="10sp"
-        app:layout_constraintBottom_toTopOf="@+id/week_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_day_text"
-        app:layout_constraintVertical_bias="0.363" />
+        <include
+            layout="@layout/navigation_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

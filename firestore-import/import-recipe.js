@@ -7,134 +7,145 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-// Step 1: Ingredient list (from previous data, 20 ingredients)
 const ingredientsData = [
   // Meat
-  { name: "Chicken", category: "Meat", ingred_image_url: "https://media.istockphoto.com/id/1282866808/photo/fresh-raw-chicken.jpg?s=612x612&w=0&k=20&c=QtfdAhdeIGpR3JUNDmYFo6cN0el8oYMcOXMQI7Qder4=" },
-  { name: "Pork", category: "Meat", ingred_image_url: "https://www.mercatogourmet.com.hk/cdn/shop/products/Australian_Free_Range_Pork_Loin_-_Rind_Off.jpg?v=1582787846&width=1500" },
-  { name: "Shrimp", category: "Meat", ingred_image_url: "https://www.markwellfoods.com.au/wp-content/uploads/2022/03/raw-prawn-tail-free-scaled.jpg" },
-  { name: "Oxtail", category: "Meat", ingred_image_url: "https://rarefoodshop.com/cdn/shop/files/ox-tail-500g-36266121625780.png?v=1743572564" },
-  { name: "Tripes", category: "Meat", ingred_image_url: "https://consistent.com.ph/wp-content/uploads/2022/09/tripe2.jpg" },
+  { name: "Tofu", category: "Meat", ingred_image_url: "https://static.vecteezy.com/system/resources/previews/025/222/302/non_2x/tofu-cubes-isolated-on-transparent-background-png.png" },
+  { name: "Turkey Sausage", category: "Meat", ingred_image_url: "https://static.vecteezy.com/system/resources/thumbnails/045/649/823/small_2x/turkey-sausage-on-transparent-background-png.png" },
 
   // Vegetables
-  { name: "Garlic", category: "Vegetable", ingred_image_url: "https://www.veggycation.com.au/siteassets/veggycationvegetable/garlic.jpg" },
-  { name: "Onion", category: "Vegetable", ingred_image_url: "https://bf1af2.a-cdn.akinoncloud.com/products/2024/10/01/151188/40731652-6590-4443-a875-7278a56188b0_size3840_cropCenter.jpg" },
-  { name: "Carrot", category: "Vegetable", ingred_image_url: "https://www.themeatbox.co.nz/cdn/shop/files/TMBProductImages_23_600x.png?v=1705350837" },
-  { name: "Eggplant", category: "Vegetable", ingred_image_url: "https://www.veggycation.com.au/siteassets/veggycationvegetable/eggplant.jpg" },
-  { name: "String beans", category: "Vegetable", ingred_image_url: "https://safeselect.ph/cdn/shop/products/StringBeans.jpg?v=1641874408" },
-
-  // Fruits
-  { name: "Tomato", category: "Fruit", ingred_image_url: "https://veggies.my/cdn/shop/products/Tomatoes.png?v=1653972536" },
-  { name: "Banana heart", category: "Fruit", ingred_image_url: "https://www.organics.ph/cdn/shop/products/banana-heart-500grams-fruits-vegetables-fresh-produce-673273_800x.jpg?v=1613208716" },
-  { name: "Calamansi", category: "Fruit", ingred_image_url: "https://dizonfarms.net/wp-content/uploads/2023/09/Calamansi-3-1.jpg" },
-  { name: "Radish", category: "Fruit", ingred_image_url: "https://safeselect.ph/cdn/shop/products/KoreanRadish_345x@2x.jpg?v=1641873903" },
-  { name: "Kangkong", category: "Fruit", ingred_image_url: "https://4rfreshandfrozen.com/cdn/shop/products/kangkong_2048x2048.jpg?v=1586781186" },
+  { name: "Cauliflower", category: "Vegetable", ingred_image_url: "https://resources.markon.com/sites/default/files/styles/large/public/pi_photos/Cauliflower_Florets_Hero.jpg" },
+  { name: "Squash", category: "Vegetable", ingred_image_url: "https://img.freepik.com/free-photo/pumpkin-slice-isolated-white-background_74190-2924.jpg?semt=ais_hybrid&w=740" },
+  { name: "Ginger", category: "Vegetable", ingred_image_url: "https://www.pngplay.com/wp-content/uploads/2/Ginger-PNG-Free-File-Download.png" },
+  { name: "Bell Pepper", category: "Vegetable", ingred_image_url: "https://thumbs.dreamstime.com/b/closeup-red-bell-pepper-water-droplets-isolated-transparent-backdrop-png-file-258788023.jpg" },
+  { name: "Chives", category: "Vegetable", ingred_image_url: "https://png.pngtree.com/png-clipart/20210530/original/pngtree-leek-food-fresh-photography-png-image_6343277.jpg" },
+  { name: "Cilantro", category: "Vegetable", ingred_image_url: "https://www.pngplay.com/wp-content/uploads/9/Cilantro-PNG-Background.png" },
+  { name: "Fresh Rosemary", category: "Vegetable", ingred_image_url: "https://static.vecteezy.com/system/resources/previews/038/746/720/non_2x/ai-generated-rosemary-plant-in-watercolor-free-png.png" },
+  { name: "Serrano Pepper", category: "Vegetable", ingred_image_url: "https://media.istockphoto.com/id/1425559289/photo/whole-and-chopped-green-jalapeno-pepper-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=2ZfK9rKrP5NfgFI8TG-gIOhGg7CQ7TO2YbSE2AOXSUw=" },
 
   // Other
-  { name: "Soy sauce", category: "Other", ingred_image_url: "https://assets.shop.loblaws.ca/products/20139275/b2/en/front/20139275_front_a06_@2.png" },
-  { name: "Vinegar", category: "Other", ingred_image_url: "https://ever.ph/cdn/shop/files/100000060698-Heinz-Distilled-White-Vinegar-16oz-230629_5e8c90e5-bdb7-45b1-9161-adb950cf79f8.jpg?v=1725513164" },
-  { name: "Fish sauce", category: "Other", ingred_image_url: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/tkt/tkt00100/l/8.jpg" },
-  { name: "Cooking oil", category: "Other", ingred_image_url: "https://imartgrocersph.com/wp-content/uploads/2020/09/Simply-Canola-Oil-1L.jpg" },
-  { name: "Peanut butter", category: "Other", ingred_image_url: "https://www.sante.com.pl/wp-content/uploads/2021/09/maslo-orzechowe-350g-smooth-klasyczne-Sante.jpg" }
+  { name: "Black Pepper", category: "Other", ingred_image_url: "https://img.freepik.com/free-psd/black-pepper-isolated-transparent-background_191095-12631.jpg?semt=ais_hybrid&w=740" },
+  { name: "Salt", category: "Other", ingred_image_url: "https://static.vecteezy.com/system/resources/previews/047/087/042/non_2x/salt-in-a-bowl-on-transparent-background-free-png.png" },
+  { name: "Olive Oil", category: "Other", ingred_image_url: "https://toppng.com/uploads/preview/olive-oil-11528319801mswpjo6s6m.png" },
+  { name: "Poblano Chile Pepper", category: "Other", ingred_image_url: "https://media.istockphoto.com/id/172172234/photo/poblano-chile-pepper-on-a-white-background.jpg?s=612x612&w=0&k=20&c=3s7S3QPaimoYEYVpsyJHqPE3AEiMu9OKSMoLyWEzBdA=" },
+  { name: "Plain Nonfat Greek yogurt", category: "Other", ingred_image_url: "https://i5.walmartimages.com/asr/9bdd02d9-352a-4eb4-9de4-402320349b9c.dc23a6a4a7e5edf90d06876f7b883103.jpeg" },
+  { name: "Ground Cumin", category: "Other", ingred_image_url: "https://laz-img-sg.alicdn.com/p/fe1aafcda9511e97e04d97366a559fb2.jpg" },
+  { name: "Kosher Salt", category: "Other", ingred_image_url: "https://images-na.ssl-images-amazon.com/images/I/41UNF9Yv8+L.jpg" },
+  { name: "Rice Vinegar", category: "Other", ingred_image_url: "https://shop.healthyoptions.com.ph/cdn/shop/products/070641064129_01.jpg?v=1630388517" },
+  { name: "Sesame Oil", category: "Other", ingred_image_url: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/edn/edn00025/y/28.jpg" },
+  { name: "Maple Syrup", category: "Other", ingred_image_url: "https://www.pngplay.com/wp-content/uploads/8/Maple-Syrup-PNG-HD-Quality.png" },
+  { name: "Egg", category: "Other", ingred_image_url: "https://png.pngtree.com/png-vector/20240521/ourmid/pngtree-fresh-single-egg-png-image_12504967.png" },
+  { name: "Cheddar Cheese", category: "Other", ingred_image_url: "https://png.pngtree.com/png-clipart/20231003/original/pngtree-cheddar-cheese-wax-png-image_13244393.png" },
+  { name: "Coconut Milk", category: "Other", ingred_image_url: "https://m.media-amazon.com/images/I/91wuVlZvFBL._SL1500_.jpg" }
 ];
 
-// Step 2: Recipes with ingredient names
 const recipesData = [
   {
-    name: "Chicken Adobo",
-    description: "A savory Filipino classic made with chicken simmered in soy sauce, vinegar, garlic, and bay leaves.",
+    name: "Simple Roasted Cauliflower",
+    description: "A quick and easy dish featuring tender cauliflower florets roasted to golden perfection with a touch of olive oil and seasoning.",
     instructions: [
-                        { number: 1, text: "In a large bowl, combine chicken, soy sauce, and garlic. Let it marinate for at least 30 minutes." },
-                        { number: 2, text: "Heat oil in a pan over medium heat. Sauté garlic until golden, then add the marinated chicken (reserve the marinade)." },
-                        { number: 3, text: "Cook the chicken until lightly browned on all sides." },
-                        { number: 4, text: "Add the reserved marinade, vinegar, bay leaves, and peppercorns. Bring to a boil without stirring." },
-                        { number: 5, text: "Lower heat, cover, and simmer for 30–40 minutes or until chicken is tender and sauce is reduced." },
-                        { number: 6, text: "Taste and adjust seasoning as needed. Serve hot with steamed rice." }
+                        { number: 1, text: "Preheat oven to 450° F." },
+                        { number: 2, text: "In a large bowl, toss cauliflower with rosemary, olive oil, salt, and pepper. Spread seasoned cauliflower on a large baking sheet (use two sheets if they are crowded on one)." },
+                        { number: 3, text: "Roast for 15 minutes; remove from oven and stir." },
+                        { number: 4, text: "Continue roasting for 10 minutes or until cauliflower is tender and lightly browned." },
+                        { number: 5, text: "Taste and adjust seasoning as needed." }
                       ],
-    cook_time: 45,
-    servings: 4,
-    image_url: "https://www.recipetineats.com/tachyon/2015/02/Filipino-Chicken-Adobo_6.jpg?resize=900%2C1260&zoom=0.72",
+    calories: 90,
+    cook_time: 25,
+    servings: 9,
+    image_url: "https://www.noracooks.com/wp-content/uploads/2025/04/roasted-cauliflower-3.jpg",
     category: "Lunch",
-    ingredients: ["Chicken", "Soy sauce", "Vinegar", "Garlic", "Bay leaves", "Black peppercorns", "Cooking oil"]
+    nutri_info: ["2g carbs", "12g protein", "2.5g fat", "85mg sodium" ],
+    ingredients: ["Black pepper", "Salt", "Olive Oil", "Fresh Rosemary", "Cauliflower"]
   },
   {
-    name: "Sinigang na Baboy",
-    description: "A hearty and tangy pork soup with tamarind, vegetables, and a savory broth.",
+    name: "Chile Lime Shrimp with Poblano Sauce",
+    description: "Juicy shrimp seasoned with chile and lime, pan-seared to perfection, and served with a creamy, smoky poblano sauce.",
     instructions: [
-                        { number: 1, text: "Boil pork in water, and skim off any scum that forms on the surface." },
-                        { number: 2, text: "Add onions, tomatoes, and radish, and cook for 20 minutes." },
-                        { number: 3, text: "Add the sinigang mix or fresh tamarind, then season with fish sauce and salt to taste." },
-                        { number: 4, text: "Add the remaining vegetables (eggplant, okra, kangkong), and cook until tender." },
-                        { number: 5, text: "Taste and adjust the sourness and seasoning as needed. Serve hot with rice." }
+                        { number: 1, text: "Line a sheet pan with parchment paper and preheat the broiler on high. Broil the poblano pepper until slightly blackened, for about 5 minutes, turning a couple of times. Place in a bowl and cover with plastic wrap to steam for 5 minutes." },
+                        { number: 2, text: "Once it’s cool enough to touch, peel off the skin. Remove the stem and slice the pepper open to remove the seeds and roughly chop the pepper." },
+                        { number: 3, text: "Toss the shrimp with ½ tablespoon olive oil, 1 garlic clove, peppers, and pepper. Let it marinate for 15-30 minutes" },
+                        { number: 4, text: "While the shrimp is marinating, finish the sauce. Blend the poblano pepper, Greek yogurt, 2 grated garlic cloves, cumin, kosher salt, and pepper in a food processor until smooth." },
+                        { number: 5, text: "Heat the remaining ½ tablespoon of olive oil in a skillet. Once the pan is hot, sear the shrimp for 2 minutes on each side until just cooked through." },
+                        { number: 6, text: "Serve with the poblano sauce." }
                       ],
-    cook_time: 60,
+    calories: 120,
+    cook_time: 20,
     servings: 6,
-    image_url: "https://panlasangpinoy.com/wp-content/uploads/2022/09/sinigang-na-baboy-730x1095.jpg",
+    image_url: "https://tammycirceo.com/wp-content/uploads/2020/02/IMG_8829-W2.jpg",
     category: "Dinner",
-    ingredients: ["Pork", "Tamarind", "Onion", "Tomato", "Radish", "Eggplant", "Okra", "Kangkong", "Fish sauce"]
+    nutri_info: ["2g carbs", "12g protein", "3g fat", "470mg sodium" ],
+    ingredients: ["Poblano Chile Pepper", "Garlic", "Plain Nonfat Greek yogurt", "Ground Cumin", "Kosher Salt", "Shrimp", "Serrano Pepper", "Black Pepper"]
   },
   {
-    name: "Pancit Canton",
-    description: "A popular Filipino stir-fried noodle dish with vegetables, meat, and seafood.",
+    name: "Tofu and Vegetable Skewers",
+    description: "Fire up the grill for a healthy dinner of Tofu and Vegetable Skewers. A delicious Asian-inspired marinade adds a burst of flavor to this diabetes-friendly meal.",
     instructions: [
-                        { number: 1, text: "Sauté garlic, onion, and pork until lightly browned." },
-                        { number: 2, text: "Add shrimp, chicken, and vegetables. Stir-fry for 5 minutes." },
-                        { number: 3, text: "Add soy sauce and chicken stock, then bring to a simmer." },
-                        { number: 4, text: "Add Pancit Canton noodles, tossing until noodles are evenly coated with the sauce." },
-                        { number: 5, text: "Cook for another 5–7 minutes until noodles are tender. Serve hot, garnished with calamansi (optional)." }
+                        { number: 1, text: "In a bowl, whisk together soy sauce, rice vinegar, sesame oil, maple syrup or agave nectar, minced garlic, and grated ginger to create the marinade." },
+                        { number: 2, text: "Cut the pressed tofu into cubes and place them in a shallow dish. Pour half of the marinade over the tofu, ensuring each piece is coated. Let it marinate for at least 30 minutes." },
+                        { number: 3, text: "While the tofu is marinating, prepare the vegetables. Thread the marinated tofu, red onion chunks, bell pepper chunks, and yellow squash rounds onto skewers, alternating between the ingredients." },
+                        { number: 4, text: "Preheat the grill or grill pan over medium-high heat." },
+                        { number: 5, text: "Grill the skewers for about 10–15 minutes, turning occasionally, until the tofu is golden and the vegetables are charred and tender. Baste the skewers with the remaining marinade during grilling for extra flavor." },
+                        { number: 6, text: "Once cooked, remove the skewers from the grill and let them rest for a few minutes." }
                       ],
-    cook_time: 30,
+    calories: 90,
+    cook_time: 15,
     servings: 4,
-    image_url: "https://www.maggi.ph/sites/default/files/styles/home_stage_944_531/public/srh_recipes/5b661360b8e49f5c2348c06858bb8f57.jpg?h=4f5b30f1&itok=doXJkNdF",
+    image_url: "https://www.allrecipes.com/thmb/PMBRl1KXcnNym5ICMVC_3oWfDpQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/5153601-grilled-tofu-skewers-with-sriracha-sauce-Buckwheat-Queen-1x1-1-b18eec5e7e2342dfb772cd0d12666075.jpg",
     category: "Appetizer",
-    ingredients: ["Pancit Canton noodles", "Shrimp", "Chicken", "Pork", "Garlic", "Onion", "Carrot", "String beans", "Soy sauce", "Chicken stock"]
+    nutri_info: ["21g carbs", "21g protein", "14g fat", "457mg sodium" ],
+    ingredients: ["Soy sauce", "Rice vinegar", "Sesame oil", "Maple syrup", "Garlic", "Onion", "Ginger", "Bell Pepper", "Tofu", "Squash"]
   },
   {
-    name: "Kare-Kare",
-    description: "A rich Filipino stew with oxtail, tripes, and a peanut-based sauce.",
+    name: "Veggie Waffle Omelette",
+    description: "This creative waffle omelette combines egg whites, colorful veggies, protein-rich breakfast that skips the carbs. ",
     instructions: [
-                        { number: 1, text: "Boil oxtail and tripes in water for about 2–3 hours until tender." },
-                        { number: 2, text: "In a separate pan, sauté garlic and onion until fragrant, then add the peanut butter and rice flour to make the sauce." },
-                        { number: 3, text: "Add the boiled oxtail and tripes into the sauce, then stir in the vegetables (eggplant, banana hearts, and string beans)." },
-                        { number: 4, text: "Simmer until vegetables are tender. Serve hot with a side of bagoong." }
+                        { number: 1, text: "Set your waffle iron to a low or medium setting and allow it to preheat. Lightly coat both the top and bottom plates with cooking spray." },
+                        { number: 2, text: "Place the egg whites in a large bowl. Whisk vigorously until slightly frothy." },
+                        { number: 3, text: "Add the shredded cheese, diced turkey sausage, bell peppers, onions, and black pepper to the eggs. Stir until all ingredients are evenly distributed." },
+                        { number: 4, text: "Pour a portion of the egg mixture onto the center of the preheated waffle iron, ensuring not to overfill. Close the lid gently. Cook for approximately 3-5 minutes, or until the eggs are fully set and the surface is lightly golden." },
+                        { number: 5, text: "Carefully remove the omelette from the waffle iron using a spatula. Repeat the process with the remaining egg mixture. Serve warm, garnished with chives." }
                       ],
-    cook_time: 180,
-    servings: 6,
-    image_url: "https://www.kuserrano.com/wp-content/uploads/2023/04/bagnet-kare-kare.jpg",
-    category: "Lunch",
-    ingredients: ["Oxtail", "Tripes", "Peanut butter", "Rice flour", "Eggplant", "Banana heart", "String beans", "Garlic", "Onion", "Bagoong"]
+    calories: 150,
+    cook_time: 15,
+    servings: 1,
+    image_url: "https://thecozycook.com/wp-content/uploads/2014/08/Waffle-Iron-Scrambled-Eggs-e1409265713828.jpg",
+    category: "Breakfast",
+    nutri_info: ["21g carbs", "21g protein", "14g fat", "457mg sodium" ],
+    ingredients: ["Egg", "Cheddar Cheese", "Turkey Sausage", "Bell Pepper", "Onion", "Kosher Salt", "Black Pepper", "Chives"]
   },
   {
-    name: "Lumpiang Shanghai",
-    description: "Crispy Filipino spring rolls filled with seasoned ground pork and vegetables.",
+    name: "Spiced Ginger Carrot Soup",
+    description: "With a touch of spice and a hint of warming ginger, it's the perfect balance of savory and sweet.",
     instructions: [
-                        { number: 1, text: "In a bowl, combine ground pork, minced garlic, onion, and carrot. Season with salt and pepper." },
-                        { number: 2, text: "Place a spoonful of the mixture in a lumpia wrapper, roll tightly, and seal the edges with a bit of water." },
-                        { number: 3, text: "Heat oil in a pan, and fry the lumpia until golden brown and crispy." },
-                        { number: 4, text: "Drain excess oil on paper towels, and serve with sweet and sour sauce." }
+                        { number: 1, text: "In a large pot, heat the olive oil over medium heat. Add the chopped onion and sauté until translucent, 4–5 minutes." },
+                        { number: 2, text: "Add the minced garlic and freshly grated ginger. Sauté for about 1–2 minutes until fragrant. Stir in the coriander and turmeric." },
+                        { number: 3, text: "Add the chopped carrots to the pot and sauté for a few minutes, coating them with the aromatic spices." },
+                        { number: 4, text: "Pour in the vegetable broth and bring the mixture to a gentle simmer. Cover the pot and let the carrots cook until they are tender." },
+                        { number: 5, text: "Once the carrots are cooked, use an immersion blender to pureé the soup until smooth." },
+                        { number: 6, text: "Stir in the coconut milk and season the soup with salt and pepper to taste. Serve the spiced ginger carrot soup hot, garnished with chopped fresh cilantro." }
                       ],
-    cook_time: 30,
-    servings: 4,
-    image_url: "https://assets.unileversolutions.com/recipes-v2/166515.jpg",
-    category: "Filipino",
-    ingredients: ["Ground pork", "Garlic", "Onion", "Carrot", "Lumpia wrappers", "Oil", "Salt and pepper", "Sweet and sour sauce"]
+    calories: 90,
+    cook_time: 15,
+    servings: 8,
+    image_url: "https://i5.walmartimages.com/dfw/7e496735-47a6/k2-_fff27782-f56e-4b91-bf4a-43bba6d5688c.v1.png",
+    category: "Breakfast",
+    nutri_info: ["10g carbs", "1g protein", "5g fat", "180mg sodium" ],
+    ingredients: ["Carrot", "Garlic", "Onion", "Olive Oil", "Ginger", "Kosher Salt", "Coconut Milk", "Cilantro"]
   }
 ];
 
 async function importData() {
-  const ingredientMap = {}; // name -> Firestore ID
+  const ingredientMap = {};
 
-  // Step 1: Upload Ingredients
   for (const item of ingredientsData) {
     const docRef = await db.collection('ingredients').add(item);
     ingredientMap[item.name] = docRef.id;
   }
 
-  // Step 2: Upload Recipes with Ingredient IDs
   for (const recipe of recipesData) {
     const ingredientIds = recipe.ingredients
       .map(name => ingredientMap[name])
-      .filter(id => !!id); // filter out undefined ones
+      .filter(id => !!id);
 
     const recipeDoc = {
       ...recipe,
@@ -144,7 +155,7 @@ async function importData() {
     await db.collection('recipes').add(recipeDoc);
   }
 
-  console.log("✅ Ingredients and Recipes uploaded successfully.");
+  console.log("Ingredients and Recipes uploaded successfully.");
 }
 
 importData().catch(console.error);
