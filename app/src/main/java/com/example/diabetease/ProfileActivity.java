@@ -2,6 +2,9 @@ package com.example.diabetease;
 
 import android.Manifest;
 import android.app.Activity;
+// --- BIRTHDATE ---
+import android.app.DatePickerDialog;
+// --- BIRTHDATE ---
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,6 +15,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+// --- BIRTHDATE ---
+import android.widget.DatePicker;
+// --- BIRTHDATE ---
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -41,9 +47,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+// --- BIRTHDATE ---
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+// --- BIRTHDATE ---
 import java.util.ArrayList;
+// --- BIRTHDATE ---
+import java.util.Calendar;
+// --- BIRTHDATE ---
 import java.util.HashMap;
 import java.util.List;
+// --- BIRTHDATE ---
+import java.util.Locale;
+// --- BIRTHDATE ---
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -63,6 +79,9 @@ public class ProfileActivity extends BaseActivity {
     private TextInputEditText emailEditText;
     private TextInputEditText newPasswordEditText;
     private TextInputEditText currentPasswordEditText; // For re-authentication
+    // --- BIRTHDATE ---
+    private TextInputEditText birthdateEditText; // Added for birthdate
+    // --- BIRTHDATE ---
     private Button updateButton;
     private Button aboutButton;
     private Button logOutButton;
@@ -75,6 +94,11 @@ public class ProfileActivity extends BaseActivity {
     private final List<String> successfulUpdates = new ArrayList<>();
     private String originalFullName = "";
     private String originalEmailFromAuth = ""; // Stores the email from Auth at load time
+    // --- BIRTHDATE ---
+    private String originalBirthdate = ""; // Stores the original birthdate from Firestore
+    private Calendar selectedBirthdateCalendar = Calendar.getInstance(); // For DatePickerDialog
+    private final SimpleDateFormat birthdateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US); // Date format
+    // --- BIRTHDATE ---
 
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -104,6 +128,10 @@ public class ProfileActivity extends BaseActivity {
         emailEditText = findViewById(R.id.emailEditText);
         newPasswordEditText = findViewById(R.id.newPasswordEditText);
         currentPasswordEditText = findViewById(R.id.currentPasswordEditText);
+        // --- BIRTHDATE ---
+        // Make sure you have a TextInputEditText with id "birthdateEditText" in your activity_profile.xml
+        birthdateEditText = findViewById(R.id.birthdateEditText);
+        // --- BIRTHDATE ---
         updateButton = findViewById(R.id.updateButton);
         aboutButton = findViewById(R.id.aboutButton);
         logOutButton = findViewById(R.id.logOutButton);
@@ -130,7 +158,6 @@ public class ProfileActivity extends BaseActivity {
                             selectedImageUri = data.getData();
                             Log.d(TAG, "Image selected: " + selectedImageUri.toString());
                             try {
-                                // Persist URI permission for content URIs
                                 if ("content".equals(selectedImageUri.getScheme())) {
                                     final int intentFlags = data.getFlags();
                                     if ((intentFlags & Intent.FLAG_GRANT_READ_URI_PERMISSION) != 0) {
@@ -148,10 +175,10 @@ public class ProfileActivity extends BaseActivity {
                                     .into(profilePictureImageView);
                             Toast.makeText(this, "Image selected. Click 'Update' to save.", Toast.LENGTH_SHORT).show();
                         } else {
-                            selectedImageUri = null; // Reset if no data
+                            selectedImageUri = null;
                         }
                     } else {
-                        selectedImageUri = null; // Reset if cancelled
+                        selectedImageUri = null;
                     }
                 });
 
@@ -162,12 +189,49 @@ public class ProfileActivity extends BaseActivity {
             mAuth.signOut();
             navigateToLogin();
         });
+
+        // --- BIRTHDATE ---
+        birthdateEditText.setOnClickListener(v -> showDatePickerDialog());
+        birthdateEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                showDatePickerDialog();
+            }
+        });
+        // --- BIRTHDATE ---
     }
+
+    // --- BIRTHDATE ---
+    private void showDatePickerDialog() {
+        Calendar calendarToShow = Calendar.getInstance();
+        if (!TextUtils.isEmpty(originalBirthdate)) { // Use originalBirthdate to initialize
+            try {
+                calendarToShow.setTime(Objects.requireNonNull(birthdateFormat.parse(originalBirthdate)));
+            } catch (ParseException e) {
+                Log.e(TAG, "Could not parse originalBirthdate for DatePicker: " + originalBirthdate, e);
+                // calendarToShow remains today's date
+            }
+        }
+
+        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+            selectedBirthdateCalendar.set(Calendar.YEAR, year);
+            selectedBirthdateCalendar.set(Calendar.MONTH, monthOfYear);
+            selectedBirthdateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            birthdateEditText.setText(birthdateFormat.format(selectedBirthdateCalendar.getTime()));
+        };
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(ProfileActivity.this, dateSetListener,
+                calendarToShow.get(Calendar.YEAR),
+                calendarToShow.get(Calendar.MONTH),
+                calendarToShow.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis()); // Optional: Prevent future dates
+        datePickerDialog.show();
+    }
+    // --- BIRTHDATE ---
 
     private void loadUserProfile() {
         if (currentUser == null) return;
 
-        originalEmailFromAuth = currentUser.getEmail(); // Store initial Auth email
+        originalEmailFromAuth = currentUser.getEmail();
         if (originalEmailFromAuth != null) {
             emailEditText.setText(originalEmailFromAuth);
         } else {
@@ -184,7 +248,7 @@ public class ProfileActivity extends BaseActivity {
                 } else if (firstName != null) {
                     originalFullName = firstName;
                 } else {
-                    originalFullName = ""; // Default if parts are missing
+                    originalFullName = "";
                 }
                 nameEditText.setText(originalFullName);
 
@@ -196,24 +260,53 @@ public class ProfileActivity extends BaseActivity {
                 } else {
                     profilePictureImageView.setImageResource(R.drawable.profile_pic);
                 }
+
+                // --- BIRTHDATE ---
+                originalBirthdate = documentSnapshot.getString("birthdate"); // Load birthdate
+                if (originalBirthdate != null && !originalBirthdate.isEmpty()) {
+                    birthdateEditText.setText(originalBirthdate);
+                    try {
+                        // Initialize selectedBirthdateCalendar with the loaded date
+                        selectedBirthdateCalendar.setTime(Objects.requireNonNull(birthdateFormat.parse(originalBirthdate)));
+                    } catch (ParseException e) {
+                        Log.e(TAG, "Error parsing stored birthdate for Calendar: " + originalBirthdate, e);
+                        selectedBirthdateCalendar = Calendar.getInstance(); // Reset to current if parsing fails
+                    }
+                } else {
+                    birthdateEditText.setText(""); // Clear if no birthdate
+                    birthdateEditText.setHint("YYYY-MM-DD"); // Set a hint
+                    selectedBirthdateCalendar = Calendar.getInstance(); // Reset
+                }
+                // --- BIRTHDATE ---
+
             } else {
                 Log.w(TAG, "User document does not exist in Firestore.");
-                // Fallback to Firebase Auth display name if Firestore doc doesn't exist
                 if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
                     originalFullName = currentUser.getDisplayName();
                 } else {
                     originalFullName = "";
                 }
                 nameEditText.setText(originalFullName);
-                profilePictureImageView.setImageResource(R.drawable.profile_pic); // Default image
+                profilePictureImageView.setImageResource(R.drawable.profile_pic);
+                // --- BIRTHDATE ---
+                birthdateEditText.setText("");
+                birthdateEditText.setHint("YYYY-MM-DD");
+                originalBirthdate = "";
+                selectedBirthdateCalendar = Calendar.getInstance();
+                // --- BIRTHDATE ---
             }
         }).addOnFailureListener(e -> {
             Log.e(TAG, "Error fetching user details from Firestore", e);
             Toast.makeText(ProfileActivity.this, "Failed to load profile details.", Toast.LENGTH_SHORT).show();
-            // Fallback: Use display name from Auth if available
             if (currentUser.getDisplayName() != null) {
                 nameEditText.setText(currentUser.getDisplayName());
             }
+            // --- BIRTHDATE ---
+            birthdateEditText.setText("");
+            birthdateEditText.setHint("YYYY-MM-DD");
+            originalBirthdate = "";
+            selectedBirthdateCalendar = Calendar.getInstance();
+            // --- BIRTHDATE ---
         });
     }
 
@@ -232,38 +325,51 @@ public class ProfileActivity extends BaseActivity {
                     Toast.makeText(ProfileActivity.this, "Profile details updated!", Toast.LENGTH_LONG).show();
                 } else if (successfulUpdates.size() == 1) {
                     String updatedField = successfulUpdates.get(0);
+                    // --- BIRTHDATE ---
                     if ("Email".equals(updatedField)) {
                         Toast.makeText(ProfileActivity.this, "Email changed successfully!", Toast.LENGTH_LONG).show();
+                    } else if ("Birthdate".equals(updatedField)) {
+                        Toast.makeText(ProfileActivity.this, "Birthdate updated successfully!", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(ProfileActivity.this, updatedField + " updated successfully!", Toast.LENGTH_SHORT).show();
                     }
+                    // --- BIRTHDATE ---
                 }
                 // Refresh the current user data after all operations
                 if (mAuth.getCurrentUser() != null) {
                     currentUser = mAuth.getCurrentUser();
-                    // Specifically update the email field in the UI from the latest currentUser state
                     if (successfulUpdates.contains("Email")) {
-                        originalEmailFromAuth = currentUser.getEmail(); // Update our original reference
+                        originalEmailFromAuth = currentUser.getEmail();
                     }
                     emailEditText.setText(currentUser.getEmail() != null ? currentUser.getEmail() : "");
                     if (successfulUpdates.contains("Name")) {
-                        // originalFullName should have been updated upon successful name change in updateUserProfile
                         nameEditText.setText(originalFullName);
                     }
+                    // --- BIRTHDATE ---
+                    if (successfulUpdates.contains("Birthdate")) {
+                        // originalBirthdate is already updated on successful Firestore write
+                        birthdateEditText.setText(originalBirthdate);
+                    }
+                    // --- BIRTHDATE ---
                 }
             } else {
                 Log.d(TAG, "All operations finished, but no successful updates recorded or all failed.");
-                // Revert email if it was an attempted change that failed and isn't already reverted
                 if (currentUser != null && originalEmailFromAuth != null && !emailEditText.getText().toString().equals(originalEmailFromAuth)
                         && !successfulUpdates.contains("Email")) {
                     emailEditText.setText(originalEmailFromAuth);
                 }
+                // --- BIRTHDATE ---
+                // Revert birthdate UI if update failed and it was changed in the EditText
+                String currentBirthdateText = birthdateEditText.getText().toString();
+                if (!currentBirthdateText.equals(originalBirthdate) && !successfulUpdates.contains("Birthdate")) {
+                    birthdateEditText.setText(originalBirthdate);
+                }
+                // --- BIRTHDATE ---
             }
             successfulUpdates.clear();
-            // Clear password fields for security after operations
             newPasswordEditText.setText("");
             currentPasswordEditText.setText("");
-            selectedImageUri = null; // Reset selected image URI
+            selectedImageUri = null;
         }
     }
 
@@ -271,7 +377,7 @@ public class ProfileActivity extends BaseActivity {
     private void reauthenticateAndPerformSensitiveOperation(String currentPassword, String operationType, Runnable operation) {
         if (currentUser == null || currentUser.getEmail() == null) {
             Toast.makeText(this, "User not properly logged in.", Toast.LENGTH_SHORT).show();
-            operationCompleted(false, operationType); // Pass operationType to correctly decrement if needed
+            operationCompleted(false, operationType);
             return;
         }
 
@@ -288,7 +394,7 @@ public class ProfileActivity extends BaseActivity {
         currentUser.reauthenticate(credential)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "User re-authenticated successfully for " + operationType + " update.");
-                    operation.run(); // Execute the sensitive operation
+                    operation.run();
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Re-authentication failed for " + operationType + " update.", e);
@@ -305,18 +411,23 @@ public class ProfileActivity extends BaseActivity {
             return;
         }
 
-        // Reset errors and pending operations
         pendingOperations = 0;
         successfulUpdates.clear();
         nameEditText.setError(null);
         emailEditText.setError(null);
         newPasswordEditText.setError(null);
         currentPasswordEditText.setError(null);
+        // --- BIRTHDATE ---
+        birthdateEditText.setError(null);
+        // --- BIRTHDATE ---
 
         String fullName = Objects.requireNonNull(nameEditText.getText()).toString().trim();
         String newAuthEmail = Objects.requireNonNull(emailEditText.getText()).toString().trim();
         String newPassword = Objects.requireNonNull(newPasswordEditText.getText()).toString().trim();
         String currentPassword = Objects.requireNonNull(currentPasswordEditText.getText()).toString();
+        // --- BIRTHDATE ---
+        String newBirthdate = Objects.requireNonNull(birthdateEditText.getText()).toString().trim();
+        // --- BIRTHDATE ---
 
         boolean anyFieldModified = false;
 
@@ -331,11 +442,11 @@ public class ProfileActivity extends BaseActivity {
             Map<String, Object> nameUpdates = new HashMap<>();
             nameUpdates.put("firstName", firstName);
             nameUpdates.put("lastName", lastName);
-            final String attemptedFullName = fullName; // For closure
+            final String attemptedFullName = fullName;
             userDocRef.update(nameUpdates)
                     .addOnSuccessListener(aVoid -> {
                         Log.d(TAG, "User name updated in Firestore.");
-                        originalFullName = attemptedFullName; // Update originalFullName on success
+                        originalFullName = attemptedFullName;
                         operationCompleted(true, "Name");
                     })
                     .addOnFailureListener(e -> {
@@ -344,6 +455,31 @@ public class ProfileActivity extends BaseActivity {
                         operationCompleted(false, "Name");
                     });
         }
+
+        // --- BIRTHDATE ---
+        // Update Birthdate in Firestore
+        // Check if birthdate changed from original or if original was empty and new one is not
+        boolean birthdateActuallyChanged = (!newBirthdate.equals(originalBirthdate) && !TextUtils.isEmpty(newBirthdate)) ||
+                (TextUtils.isEmpty(originalBirthdate) && !TextUtils.isEmpty(newBirthdate));
+
+        if (birthdateActuallyChanged) {
+            anyFieldModified = true;
+            pendingOperations++;
+            DocumentReference userDocRef = db.collection("users").document(currentUser.getUid());
+            final String attemptedBirthdate = newBirthdate; // For closure
+            userDocRef.update("birthdate", newBirthdate)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "User birthdate updated in Firestore.");
+                        originalBirthdate = attemptedBirthdate; // Update originalBirthdate on success
+                        operationCompleted(true, "Birthdate");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Error updating birthdate in Firestore", e);
+                        Toast.makeText(ProfileActivity.this, "Failed to update birthdate.", Toast.LENGTH_SHORT).show();
+                        operationCompleted(false, "Birthdate");
+                    });
+        }
+        // --- BIRTHDATE ---
 
         // --- Update Firebase Authentication Email ---
         boolean authEmailChanged = !TextUtils.isEmpty(newAuthEmail) && originalEmailFromAuth != null && !newAuthEmail.equalsIgnoreCase(originalEmailFromAuth);
@@ -364,13 +500,16 @@ public class ProfileActivity extends BaseActivity {
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Log.d(TAG, "Firebase Auth email update initiated. Verification email sent to " + newAuthEmail);
+                                    // Successfully initiated email update. Firebase handles the rest (e.g., verification email).
+                                    // We can consider this "success" for the purpose of the operation count.
+                                    // The 'originalEmailFromAuth' will be updated in operationCompleted upon success.
                                     operationCompleted(true, "Email");
                                 } else {
                                     Log.e(TAG, "Error updating Firebase Auth email", task.getException());
                                     String emailErrorMessage = "Failed to update email.";
                                     if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
                                         emailErrorMessage = "Security check: Enter current password to update email.";
-                                        currentPasswordEditText.requestFocus(); // Should already be focused by reauth logic
+                                        currentPasswordEditText.requestFocus();
                                     } else if (task.getException() != null && task.getException().getMessage() != null &&
                                             task.getException().getMessage().contains("EMAIL_EXISTS")) {
                                         emailErrorMessage = "This email address is already in use.";
@@ -380,7 +519,7 @@ public class ProfileActivity extends BaseActivity {
                                         emailErrorMessage = "Failed to update email: " + task.getException().getMessage();
                                     }
                                     Toast.makeText(ProfileActivity.this, emailErrorMessage, Toast.LENGTH_LONG).show();
-                                    emailEditText.setText(originalEmailFromAuth); // Revert UI
+                                    emailEditText.setText(originalEmailFromAuth);
                                     operationCompleted(false, "Email");
                                 }
                             });
@@ -410,7 +549,7 @@ public class ProfileActivity extends BaseActivity {
                                     String pwErrorMessage = "Failed to update password.";
                                     if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
                                         pwErrorMessage = "Security check: Enter current password to update password.";
-                                        currentPasswordEditText.requestFocus(); // Should already be focused
+                                        currentPasswordEditText.requestFocus();
                                     } else if (task.getException() != null && task.getException().getMessage() != null) {
                                         pwErrorMessage = "Failed to update password: " + task.getException().getMessage();
                                     }
@@ -430,24 +569,24 @@ public class ProfileActivity extends BaseActivity {
             uploadProfilePictureToCloudinary(selectedImageUri);
         }
 
-        // --- Handle case where no fields were modified or only validation errors exist ---
         if (!anyFieldModified && pendingOperations == 0) {
             boolean nameError = nameEditText.getError() != null;
             boolean emailError = emailEditText.getError() != null;
             boolean newPasswordError = newPasswordEditText.getError() != null;
             boolean currentPasswordError = currentPasswordEditText.getError() != null;
+            // --- BIRTHDATE ---
+            boolean birthdateError = birthdateEditText.getError() != null; // Though we don't set errors on it currently
+            // --- BIRTHDATE ---
 
-            if (!nameError && !emailError && !newPasswordError && !currentPasswordError && TextUtils.isEmpty(newPassword) && selectedImageUri == null) {
+            if (!nameError && !emailError && !newPasswordError && !currentPasswordError && !birthdateError &&
+                    TextUtils.isEmpty(newPassword) && selectedImageUri == null) {
                 Toast.makeText(this, "No changes to update.", Toast.LENGTH_SHORT).show();
             } else if (anyFieldModified) {
-                // This means some operation was started but failed very early (e.g. invalid new password length)
-                // The specific error toast would have already shown.
-            } else if (nameError || emailError || newPasswordError || currentPasswordError) {
+                // This means some operation was started but failed very early
+            } else if (nameError || emailError || newPasswordError || currentPasswordError || birthdateError) {
                 Toast.makeText(this, "Please correct the errors before updating.", Toast.LENGTH_SHORT).show();
             }
         } else if (pendingOperations == 0 && anyFieldModified && successfulUpdates.isEmpty()) {
-            // This means operations were attempted but all failed.
-            // Specific error messages should have been shown by each operation.
             Log.d(TAG, "All attempted operations failed.");
         }
     }
@@ -460,21 +599,17 @@ public class ProfileActivity extends BaseActivity {
         }
         Log.d(TAG, "Uploading to Cloudinary: " + imageUri.toString());
 
-        // Ensure MediaManager is initialized (usually in Application class)
-        // MediaManager.get().upload(imageUri)...
         String requestId = MediaManager.get().upload(imageUri)
-                .unsigned(CLOUDINARY_UPLOAD_PRESET) // Use your upload preset
-                .option("folder", "profile_pictures") // Optional: specify a folder
+                .unsigned(CLOUDINARY_UPLOAD_PRESET)
+                .option("folder", "profile_pictures")
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
                         Log.d(TAG, "Cloudinary upload started: " + requestId);
-                        // Show progress dialog or similar
                     }
 
                     @Override
                     public void onProgress(String requestId, long bytes, long totalBytes) {
-                        // Update progress if needed
                     }
 
                     @Override
@@ -490,7 +625,7 @@ public class ProfileActivity extends BaseActivity {
                                     .update("profilePictureUrl", imageUrl)
                                     .addOnSuccessListener(aVoid -> {
                                         Log.d(TAG, "Profile picture URL updated in Firestore.");
-                                        selectedImageUri = null; // Clear after successful upload
+                                        // selectedImageUri = null; // Already handled in operationCompleted
                                         operationCompleted(true, "Profile Picture");
                                     })
                                     .addOnFailureListener(e -> {
@@ -515,18 +650,17 @@ public class ProfileActivity extends BaseActivity {
                     @Override
                     public void onReschedule(String requestId, ErrorInfo error) {
                         Log.w(TAG, "Cloudinary upload rescheduled: " + error.getDescription());
-                        // Handle reschedule if necessary
                     }
                 })
-                .dispatch(); // Don't forget to dispatch
+                .dispatch();
     }
 
 
     private void checkPermissionAndOpenGallery() {
         String permission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permission = Manifest.permission.READ_MEDIA_IMAGES;
-        } else { // Android 12 and below
+        } else {
             permission = Manifest.permission.READ_EXTERNAL_STORAGE;
         }
 
@@ -538,10 +672,10 @@ public class ProfileActivity extends BaseActivity {
     }
 
     private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); // More robust for persistent access
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
-        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION); // For persistent access
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         galleryLauncher.launch(intent);
     }
@@ -564,19 +698,4 @@ public class ProfileActivity extends BaseActivity {
         startActivity(intent);
         finish();
     }
-
-    // Ensure MyApplication class is set up for Cloudinary MediaManager initialization
-    // Example:
-    // public class MyApplication extends Application {
-    //     @Override
-    //     public void onCreate() {
-    //         super.onCreate();
-    //         Map config = new HashMap();
-    //         config.put("cloud_name", "YOUR_CLOUD_NAME");
-    //         config.put("api_key", "YOUR_API_KEY"); // Optional, if not using unsigned uploads
-    //         config.put("api_secret", "YOUR_API_SECRET"); // Optional, if not using unsigned uploads
-    //         MediaManager.init(this, config);
-    //     }
-    // }
-    // And in AndroidManifest.xml: <application android:name=".MyApplication" ... >
 }
