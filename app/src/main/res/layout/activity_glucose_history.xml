@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/menu_icon" />
@@ -30,60 +30,74 @@
         app:layout_constraintBottom_toBottomOf="@id/imageView9"
         app:layout_constraintStart_toEndOf="@id/imageView9" />
 
-    <!-- Filter + Toggle Row -->
-    <LinearLayout
-        android:id="@+id/buttonRow"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        android:paddingHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@id/imageView9"
+    <Button
+        android:id="@+id/filterButton"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="140dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Filter by Month"
+        android:textColor="#605C65"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
-        <Button
-            android:id="@+id/filterButton"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="@android:color/white"
+    <LinearLayout
+        android:id="@+id/toggle_container"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/toggle_unselected"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toEndOf="@+id/filterButton"
+        app:layout_constraintTop_toBottomOf="@+id/textView18">
+
+        <TextView
+            android:id="@+id/today_button"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:fontFamily="@font/poppins_medium"
-            android:text="Filter by Month"
-            android:textColor="#0468FF"
-            style="?android:attr/buttonBarButtonStyle" />
-
-        <Button
-            android:id="@+id/todayButton"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="Today"
-            android:background="@android:color/white"
-            android:textColor="#0468FF"
-            android:fontFamily="@font/poppins_medium"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/historyButton"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="History"
-            android:background="@android:color/white"
-            android:textColor="#0468FF"
+        <TextView
+            android:id="@+id/history_button"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/toggle_selected"
             android:fontFamily="@font/poppins_medium"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:gravity="center"
+            android:text="History"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
     </LinearLayout>
 
+
     <!-- RecyclerView -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/glucoseRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonRow"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/filterButton" />
+
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
