@@ -241,7 +241,7 @@ public class GlucoseHistory extends AppCompatActivity {
                             filterByWeek();
                         } else {
                             selectedMonth = which - 1;
-                            filterByMonth(selectedMonth + 1);
+                            filterByMonth(selectedMonth);
                             filterButton.setText(months[which - 2]);
                         }
                     }
