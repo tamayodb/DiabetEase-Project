@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -199,29 +202,47 @@ public class GlucoseHistory extends AppCompatActivity {
         String[] months = {"January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"};
 
-        // Add "Show All" option at the beginning
-        String[] options = new String[months.length + 1];
+        String[] options = new String[months.length + 2];
         options[0] = "Show All";
-        System.arraycopy(months, 0, options, 1, months.length);
+        options[1] = "This Week";
+        System.arraycopy(months, 0, options, 2, months.length);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
 
-        // Create the dialog
-        AlertDialog dialog = builder.setTitle("Select Month to Filter")
-                .setItems(options, new DialogInterface.OnClickListener() {
+        AlertDialog dialog = builder.setTitle("Select Filter")
+                .setAdapter(new ArrayAdapter<String>(this, R.layout.dialog_list_item, options) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView textView = view.findViewById(R.id.dialogItemText);
+
+                        // Apply custom colors
+                        if (position == 0) {
+                            textView.setTextColor(Color.parseColor("#0665F4")); // Show All
+                        } else if (position == 1) {
+                            textView.setTextColor(Color.parseColor("#0665F4")); // This Week
+                        } else {
+                            textView.setTextColor(Color.parseColor("#202F3E")); // Default for months
+                        }
+
+                        return view;
+                    }
+                }, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0) {
-                            // Show All selected
                             selectedMonth = -1;
                             filterButton.setText("Filter by Month");
                             showAllData();
+                        } else if (which == 1) {
+                            filterButton.setText("This Week");
+                            filterByWeek();
                         } else {
-                            // Month selected
-                            selectedMonth = which; // 1-12 for Jan-Dec
-                            String selectedMonthName = months[which - 1];
-                            filterByMonth(selectedMonth);
-                            filterButton.setText(selectedMonthName);
+                            selectedMonth = which - 1;
+                            filterByMonth(selectedMonth + 1);
+                            filterButton.setText(months[which - 2]);
                         }
                     }
                 })
@@ -230,7 +251,7 @@ public class GlucoseHistory extends AppCompatActivity {
 
         dialog.show();
 
-        // Apply Poppins font to dialog after showing
+    // Apply Poppins font to dialog after showing
         try {
             android.graphics.Typeface poppinsFont = getResources().getFont(R.font.poppins_medium);
 
@@ -255,6 +276,7 @@ public class GlucoseHistory extends AppCompatActivity {
             android.widget.Button cancelButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
             if (cancelButton != null) {
                 cancelButton.setTypeface(poppinsFont);
+                cancelButton.setTextColor(Color.parseColor("#0665F4"));
             }
         } catch (Exception e) {
             Log.e(TAG, "Error applying font to dialog", e);
@@ -284,7 +306,33 @@ public class GlucoseHistory extends AppCompatActivity {
         glucoseAdapter.notifyDataSetChanged();
     }
 
-    private boolean isGlucoseInMonth(Glucose glucose, int monthNumber) {
+private void filterByWeek() {
+    glucoseList.clear();
+
+    Calendar now = Calendar.getInstance();
+    int currentWeek = now.get(Calendar.WEEK_OF_YEAR);
+    int currentYear = now.get(Calendar.YEAR);
+
+    for (Glucose glucose : originalGlucoseList) {
+        Calendar recordCal = Calendar.getInstance();
+        recordCal.setTime(new Date(glucose.getTimestamp()));
+        int recordWeek = recordCal.get(Calendar.WEEK_OF_YEAR);
+        int recordYear = recordCal.get(Calendar.YEAR);
+
+        if (recordWeek == currentWeek && recordYear == currentYear) {
+            glucoseList.add(glucose);
+        }
+    }
+
+    glucoseAdapter.notifyDataSetChanged();
+
+    if (glucoseList.isEmpty()) {
+        Toast.makeText(this, "No glucose records found for this week", Toast.LENGTH_SHORT).show();
+    }
+}
+
+
+private boolean isGlucoseInMonth(Glucose glucose, int monthNumber) {
         try {
             Date recordDate = new Date(glucose.getTimestamp());
             Calendar calendar = Calendar.getInstance();
