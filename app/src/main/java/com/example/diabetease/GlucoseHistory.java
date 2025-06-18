@@ -45,7 +45,7 @@ public class GlucoseHistory extends AppCompatActivity {
     private List<Glucose> originalGlucoseList; // Store original data for filtering
     private Button filterButton;
 
-    private TextView todayButton, historyButton;
+    private TextView todayButton, historyButton, noRecordsTextView;
     private int selectedMonth = -1; // -1 means no filter applied
     private FirebaseFirestore firestore;
     private FirebaseAuth firebaseAuth;
@@ -57,6 +57,7 @@ public class GlucoseHistory extends AppCompatActivity {
         setContentView(R.layout.activity_glucose_history);
 
         glucoseRecyclerView = findViewById(R.id.glucoseRecyclerView);
+        noRecordsTextView = findViewById(R.id.noRecordsTextView);
         glucoseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         glucoseList = new ArrayList<>();
         originalGlucoseList = new ArrayList<>(); // Initialize original list
@@ -105,6 +106,16 @@ public class GlucoseHistory extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void updateEmptyState() {
+        if (glucoseList.isEmpty()) {
+            glucoseRecyclerView.setVisibility(View.GONE);
+            noRecordsTextView.setVisibility(View.VISIBLE);
+        } else {
+            glucoseRecyclerView.setVisibility(View.VISIBLE);
+            noRecordsTextView.setVisibility(View.GONE);
+        }
     }
 
     private void openDashboard() {
@@ -294,6 +305,7 @@ public class GlucoseHistory extends AppCompatActivity {
         }
 
         glucoseAdapter.notifyDataSetChanged();
+        updateEmptyState();
 
         // Show message if no data found
         if (glucoseList.isEmpty()) {
@@ -305,6 +317,7 @@ public class GlucoseHistory extends AppCompatActivity {
         glucoseList.clear();
         glucoseList.addAll(originalGlucoseList);
         glucoseAdapter.notifyDataSetChanged();
+        updateEmptyState();
     }
 
 private void filterByWeek() {
@@ -326,6 +339,7 @@ private void filterByWeek() {
     }
 
     glucoseAdapter.notifyDataSetChanged();
+    updateEmptyState();
 
     if (glucoseList.isEmpty()) {
         Toast.makeText(this, "No glucose records found for this week", Toast.LENGTH_SHORT).show();
