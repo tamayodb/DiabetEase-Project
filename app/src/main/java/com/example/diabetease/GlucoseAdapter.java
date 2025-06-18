@@ -1,6 +1,8 @@
 package com.example.diabetease;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +17,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
+
 public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.ViewHolder> {
 
     private static final String TAG = "GlucoseAdapter";
     private List<Glucose> glucoseList;
 
-    public GlucoseAdapter(List<Glucose> glucoseList) {
+    private Context context;
+
+    public GlucoseAdapter(Context context, List<Glucose> glucoseList) {
+        this.context = context;
         this.glucoseList = glucoseList;
         Log.d(TAG, "Adapter created with " + glucoseList.size() + " items");
     }
@@ -43,6 +52,7 @@ public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.ViewHold
             return;
         }
 
+
         Glucose record = glucoseList.get(position);
 
         Log.d(TAG, "Binding record: Value=" + record.getGlucose_value() +
@@ -51,28 +61,53 @@ public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.ViewHold
 
         // Set glucose value and unit
         holder.valueText.setText(String.valueOf(record.getGlucose_value()));
-        holder.unitText.setText(" mg/dL");
+        holder.unitText.setText("mg/dL");
 
         // Set status
         holder.statusLabel.setText(record.getGlucose_status());
 
-        // Set status color (using proper Color.parseColor)
+        Drawable dotDrawable = ContextCompat.getDrawable(context, R.drawable.ic_status_dot);
+        if (dotDrawable != null) {
+            dotDrawable = DrawableCompat.wrap(dotDrawable.mutate());
+        }
+
         switch (record.getGlucose_status().toLowerCase()) {
             case "high":
-                holder.statusLabel.setTextColor(Color.parseColor("#FF3B30")); // Red
+                holder.statusLabel.setBackgroundResource(R.drawable.chip_background_high);
+                holder.statusLabel.setTextColor(Color.parseColor("#E63E3E")); // Red
+                if (dotDrawable != null) {
+                    DrawableCompat.setTint(dotDrawable, Color.parseColor("#E63E3E"));
+                }
                 break;
             case "low":
-                holder.statusLabel.setTextColor(Color.parseColor("#FF9500")); // Orange
+                holder.statusLabel.setBackgroundResource(R.drawable.chip_background_low); // Orange
+                holder.statusLabel.setTextColor(Color.parseColor("#E39C57"));
+                if (dotDrawable != null) {
+                    DrawableCompat.setTint(dotDrawable, Color.parseColor("#E39C57"));
+                }
                 break;
             case "normal":
             case "good":
-                holder.statusLabel.setTextColor(Color.parseColor("#34C759")); // Green
+                holder.statusLabel.setBackgroundResource(R.drawable.chip_background_good); // Green
+                holder.statusLabel.setTextColor(Color.parseColor("#38B277"));
+                if (dotDrawable != null) {
+                    DrawableCompat.setTint(dotDrawable, Color.parseColor("#38B277"));
+                }
                 break;
             default:
                 holder.statusLabel.setTextColor(Color.parseColor("#000000")); // Black
                 Log.w(TAG, "Unknown status: " + record.getGlucose_status());
+                if (dotDrawable != null) {
+                    DrawableCompat.setTint(dotDrawable, Color.GRAY);
+                }
                 break;
         }
+
+        if (dotDrawable != null) {
+            holder.statusLabel.setCompoundDrawablesWithIntrinsicBounds(dotDrawable, null, null, null);
+            holder.statusLabel.setCompoundDrawablePadding(8); // Optional spacing between dot and text
+        }
+
 
         // Format timestamp to readable date
         try {
@@ -100,7 +135,7 @@ public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.ViewHold
             super(itemView);
             valueText = itemView.findViewById(R.id.value_text);
             unitText = itemView.findViewById(R.id.unit_text);
-            statusLabel = itemView.findViewById(R.id.status_label);
+            statusLabel = itemView.findViewById(R.id.status_chip);
             dateText = itemView.findViewById(R.id.date_text);
 
             // Log if any views are null

@@ -60,7 +60,7 @@ public class GlucoseHistory extends AppCompatActivity {
         glucoseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         glucoseList = new ArrayList<>();
         originalGlucoseList = new ArrayList<>(); // Initialize original list
-        glucoseAdapter = new GlucoseAdapter(glucoseList);
+        glucoseAdapter = new GlucoseAdapter(this, glucoseList);
         glucoseRecyclerView.setAdapter(glucoseAdapter);
 
         filterButton = findViewById(R.id.filterButton);
@@ -110,6 +110,7 @@ public class GlucoseHistory extends AppCompatActivity {
     private void openDashboard() {
         Intent intent = new Intent(this, LogsActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     private void loadGlucoseData() {

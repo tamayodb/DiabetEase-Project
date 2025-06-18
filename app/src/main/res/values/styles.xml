@@ -31,4 +31,9 @@
         <item name="cornerSizeBottomRight">8dp</item>
     </style>
 
+    <style name="Button.NoTint" parent="Widget.AppCompat.Button">
+        <item name="android:backgroundTint">@null</item>
+        <item name="android:background">@drawable/button_stroke_background</item>
+    </style>
+
 </resources>

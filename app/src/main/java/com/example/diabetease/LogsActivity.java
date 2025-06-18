@@ -78,6 +78,7 @@ public class LogsActivity extends BaseActivity {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
+
         initializeViews();
         setupNavigationBar();
         setupWeekNavigation();
@@ -159,6 +160,7 @@ public class LogsActivity extends BaseActivity {
     private void openGlucoseHistory() {
         Intent intent = new Intent(this, GlucoseHistory.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
 
