@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpecificRecipeActivity extends AppCompatActivity {
     private ImageView recipeImage;
-    private TextView recipeName, recipeDescription, recipeCookTime;
+    private TextView recipeName, recipeDescription, recipeCookTime, recipeServings;
     private TextView carbsValue, proteinValue, sweetenerValue, fatsValue;
     private TextView ingredientsCount, recipeInstructions;
     private Button ingredientsTab, instructionTab;
@@ -84,6 +84,7 @@ public class SpecificRecipeActivity extends AppCompatActivity {
         recipeName = findViewById(R.id.recipe_name);
         recipeDescription = findViewById(R.id.recipe_description);
         recipeCookTime = findViewById(R.id.recipe_cook_time);
+        recipeServings = findViewById(R.id.recipe_serving);
 
         carbsValue = findViewById(R.id.carbs_value);
         proteinValue = findViewById(R.id.protein_value);
@@ -158,6 +159,7 @@ public class SpecificRecipeActivity extends AppCompatActivity {
             cookTime = "0";
         }
         recipeCookTime.setText(String.format("%s Min", cookTime));
+        recipeServings.setText(String.format("%s Servings", String.valueOf(recipe.getServings())));
 
         // Nutrition info
         populateNutritionInfo(recipe);
@@ -169,7 +171,6 @@ public class SpecificRecipeActivity extends AppCompatActivity {
     }
 
     private void populateNutritionInfo(Recipes recipe) {
-        // Array of TextViews to populate
         TextView[] nutritionTextViews = {carbsValue, proteinValue, fatsValue, sweetenerValue};
 
         // Default values
@@ -258,7 +259,6 @@ public class SpecificRecipeActivity extends AppCompatActivity {
                                     // Add to list and notify adapter immediately
                                     ingredientsList.add(ingredient);
 
-                                    // Run on UI thread to update adapter
                                     runOnUiThread(() -> {
                                         ingredientsAdapter.notifyItemInserted(ingredientsList.size() - 1);
                                     });
@@ -301,7 +301,6 @@ public class SpecificRecipeActivity extends AppCompatActivity {
         List<Map<String, Object>> rawInstructions = recipe.getInstructions();
         if (rawInstructions != null) {
             for (Map<String, Object> map : rawInstructions) {
-                // Safely cast Firestore values
                 Long stepNumberLong = (Long) map.get("number");
                 String stepText = (String) map.get("text");
 

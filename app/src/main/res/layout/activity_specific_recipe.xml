@@ -65,6 +65,7 @@
 
                 <!-- Recipe Title and Time -->
                 <LinearLayout
+                    android:id="@+id/recipe_title_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
@@ -119,6 +120,41 @@
                     android:text="This Healthy Taco Salad is the universal delight of taco night."
                     android:textColor="#666666"
                     android:textSize="14sp" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="@id/recipe_description"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/recipe_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="Source: Diabetes Food Hub"
+                        android:textColor="#748189"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/recipe_serving"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+
+                        android:fontFamily="@font/poppins_regular"
+                        android:text="Serving Size: 4"
+                        android:textAlignment="textEnd"
+                        android:textColor="#0468FF"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
 
                 <!-- Nutrition Cards Grid -->
                 <GridLayout
