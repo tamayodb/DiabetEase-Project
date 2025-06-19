@@ -8,36 +8,58 @@
     android:background="@android:color/white"
     tools:context=".RecipeResultActivity">
 
-    <!-- Back Button -->
-    <ImageView
-        android:id="@+id/back_button_recipe_result"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_margin="16dp"
-        android:padding="6dp"
-        android:layout_gravity="top|start"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/back"
-        android:contentDescription="Back" />
+    <!-- Top Layout: Back Button and Title -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="50dp">
 
-    <!-- Category Filter Spinner -->
+        <ImageView
+            android:id="@+id/back_button_recipe_result"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/back"
+            android:contentDescription="Back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/title_recipe_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Recipe"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/poppins_bold"
+            app:layout_constraintStart_toEndOf="@id/back_button_recipe_result"
+            app:layout_constraintTop_toTopOf="@id/back_button_recipe_result"
+            app:layout_constraintBottom_toBottomOf="@id/back_button_recipe_result" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Category Spinner -->
     <Spinner
         android:id="@+id/category_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="110dp"
+        android:layout_marginStart="30dp"
         android:layout_gravity="top|start" />
 
-    <!-- RecyclerView for Results -->
+    <!-- Recipe RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recipe_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="110dp"
-        android:padding="12dp"
+        android:layout_marginTop="160dp"
         android:clipToPadding="false"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
-
+        tools:listitem="@layout/item_recipe_card" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -79,6 +79,8 @@ public class RecipeResultActivity extends AppCompatActivity {
 
     private void fetchMatchingRecipes(List<String> selectedIngredients, String selectedCategory) {
         recipesRef.get().addOnSuccessListener(querySnapshot -> {
+
+
             matchedRecipes.clear();
 
             for (QueryDocumentSnapshot doc : querySnapshot) {
