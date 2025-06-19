@@ -59,14 +59,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/scrollableContentLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profilePicture"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginTop="8dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_marginTop="5dp"
                 android:src="@drawable/profile_pic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
@@ -93,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_bold"
                 android:text="Name"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginStart="32dp"
                 android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
@@ -295,7 +294,7 @@
                 android:backgroundTint="#007BFF"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/birthdateInputLayout"/> 
+                app:layout_constraintTop_toBottomOf="@+id/birthdateInputLayout"/>
 
             <LinearLayout
                 android:id="@+id/actionButtonsLayout"

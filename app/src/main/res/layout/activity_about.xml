@@ -24,9 +24,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/headerImage"
-                android:layout_width="400dp"
+                android:layout_width="match_parent"
                 android:layout_height="230dp"
-                android:layout_marginTop="16dp"
                 android:contentDescription="Header image showing diabetes management tools"
                 android:scaleType="centerCrop"
                 android:src="@drawable/abt_banner"
