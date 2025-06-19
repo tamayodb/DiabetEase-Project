@@ -5,7 +5,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -83,8 +85,6 @@ public class RecipeResultActivity extends AppCompatActivity {
 
     private void fetchMatchingRecipes(List<String> selectedIngredients, String selectedCategory) {
         recipesRef.get().addOnSuccessListener(querySnapshot -> {
-
-
             matchedRecipes.clear();
 
             for (QueryDocumentSnapshot doc : querySnapshot) {
@@ -98,16 +98,33 @@ public class RecipeResultActivity extends AppCompatActivity {
                     }
                 }
 
-                // Check if category matches
                 boolean categoryMatch = selectedCategory.equals("All") ||
                         recipe.getCategory().equalsIgnoreCase(selectedCategory);
 
-                // Only show if 2 or more ingredients match and category fits
                 if (matchCount >= 2 && categoryMatch) {
                     matchedRecipes.add(recipe);
                 }
             }
+
             adapter.notifyDataSetChanged();
+
+            // UI visibility logic
+            LinearLayout emptyStateLayout = findViewById(R.id.emptyStateLayout);
+            Spinner categorySpinner = findViewById(R.id.category_spinner);
+            TextView titleRecipeResult = findViewById(R.id.title_recipe_result);
+            RecyclerView recyclerView = findViewById(R.id.recipe_recycler_view);
+
+            if (matchedRecipes.isEmpty()) {
+                emptyStateLayout.setVisibility(View.VISIBLE);
+                categorySpinner.setVisibility(View.GONE);
+                titleRecipeResult.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                emptyStateLayout.setVisibility(View.GONE);
+                categorySpinner.setVisibility(View.VISIBLE);
+                titleRecipeResult.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
         });
     }
 
