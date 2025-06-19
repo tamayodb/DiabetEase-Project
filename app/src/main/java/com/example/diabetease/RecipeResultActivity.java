@@ -35,8 +35,12 @@ public class RecipeResultActivity extends AppCompatActivity {
         // Back button setup
         ImageView backButton = findViewById(R.id.back_button_recipe_result);
         if (backButton != null) {
-            backButton.setOnClickListener(v -> finish());
+            backButton.setOnClickListener(v -> {
+                finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            });
         }
+
 
         // Spinner setup for category filter
         Spinner categorySpinner = findViewById(R.id.category_spinner);
@@ -103,8 +107,8 @@ public class RecipeResultActivity extends AppCompatActivity {
                     matchedRecipes.add(recipe);
                 }
             }
-
             adapter.notifyDataSetChanged();
         });
     }
+
 }
