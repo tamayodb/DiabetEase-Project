@@ -53,8 +53,6 @@ public class RecipeChooseFruit extends AppCompatActivity {
         selectedFruits = new ArrayList<>();
         fruitList = new ArrayList<>();
 
-        selectedVegetables = new ArrayList<>();
-        selectedMeats = new ArrayList<>();
 
         if (getIntent().hasExtra("selected_fruits")) {
             selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");

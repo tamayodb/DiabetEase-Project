@@ -51,9 +51,6 @@ public class RecipeChooseMeat extends AppCompatActivity {
         selectedMeats = new ArrayList<>();
         meatList = new ArrayList<>();
 
-        selectedFruits = new ArrayList<>();
-        selectedVegetables = new ArrayList<>();
-
 
         if (getIntent().hasExtra("selected_fruits")) {
             selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");
@@ -122,7 +119,7 @@ public class RecipeChooseMeat extends AppCompatActivity {
             Intent intent = new Intent(this, RecipeChooseFruit.class);
             intent.putStringArrayListExtra("selected_fruits", selectedFruits);
             intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
-            intent.putStringArrayListExtra("selected_meats", selectedMeats); //
+            intent.putStringArrayListExtra("selected_meats", selectedMeats);
             fruitSelectionLauncher.launch(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });

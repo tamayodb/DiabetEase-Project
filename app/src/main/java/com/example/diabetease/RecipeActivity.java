@@ -126,19 +126,25 @@ public class RecipeActivity extends BaseActivity {
         fruitButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseFruit.class);
             intent.putStringArrayListExtra("selected_fruits", selectedIngredients.get("fruits"));
+            intent.putStringArrayListExtra("selected_vegetables", selectedIngredients.get("vegetables"));
+            intent.putStringArrayListExtra("selected_meats", selectedIngredients.get("meat"));
             fruitSelectionLauncher.launch(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         vegetableButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseVegetable.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedIngredients.get("fruits"));
             intent.putStringArrayListExtra("selected_vegetables", selectedIngredients.get("vegetables"));
+            intent.putStringArrayListExtra("selected_meats", selectedIngredients.get("meat"));
             vegetableSelectionLauncher.launch(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         meatButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseMeat.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedIngredients.get("fruits"));
+            intent.putStringArrayListExtra("selected_vegetables", selectedIngredients.get("vegetables"));
             intent.putStringArrayListExtra("selected_meats", selectedIngredients.get("meat"));
             meatSelectionLauncher.launch(intent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

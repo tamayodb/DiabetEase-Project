@@ -29,8 +29,6 @@ public class RecipeChooseVegetable extends AppCompatActivity {
     private ArrayList<String> selectedVegetables;
     private ArrayList<String> selectedFruits;
     private ArrayList<String> selectedMeats;
-
-
     private Button confirmButton;
 
     private ActivityResultLauncher<Intent> fruitSelectionLauncher;
@@ -53,12 +51,6 @@ public class RecipeChooseVegetable extends AppCompatActivity {
         selectedVegetables = new ArrayList<>();
         vegetableList = new ArrayList<>();
 
-        selectedFruits = new ArrayList<>();
-        selectedMeats = new ArrayList<>();
-
-        setupRecyclerView();
-        loadVegetablesFromFirebase();
-
         if (getIntent().hasExtra("selected_fruits")) {
             selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");
         }
@@ -68,6 +60,10 @@ public class RecipeChooseVegetable extends AppCompatActivity {
         if (getIntent().hasExtra("selected_meats")) {
             selectedMeats = getIntent().getStringArrayListExtra("selected_meats");
         }
+
+
+        setupRecyclerView();
+        loadVegetablesFromFirebase();
 
 
         // Back button click
