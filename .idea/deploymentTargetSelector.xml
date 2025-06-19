@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="DiabetEase.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-06-16T12:00:37.890531500Z">
+        <DropdownSelection timestamp="2025-06-19T14:36:06.666032600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\tdany\.android\avd\Pixel_9a.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=38f8a41d" />
             </handle>
           </Target>
         </DropdownSelection>
