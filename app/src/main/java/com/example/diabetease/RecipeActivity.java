@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,8 +24,7 @@ import java.util.Map;
 
 public class RecipeActivity extends BaseActivity {
 
-    private CardView fruitButton, vegetableButton, meatButton;
-    private Button continueButton;
+    private ImageButton fruitButton, vegetableButton, meatButton, continueButton;
 
     // Store selected ingredients by category
     private Map<String, ArrayList<String>> selectedIngredients;
@@ -60,17 +60,22 @@ public class RecipeActivity extends BaseActivity {
         vegetableButton = findViewById(R.id.vegetable_button);
         meatButton = findViewById(R.id.meat_button);
         continueButton = findViewById(R.id.continue_button);
+        continueButton.setVisibility(View.GONE);
 
-        // Set up result launchers
         setupResultLaunchers();
-
-        // Set up custom buttons
-        setupCustomButton(fruitButton, R.drawable.fruit_icon, R.string.fruits);
-        setupCustomButton(vegetableButton, R.drawable.vegetables_icon, R.string.vegetables);
-        setupCustomButton(meatButton, R.drawable.meat_icon, R.string.meat_proteins);
-
-        // Set up button click listeners
         setupButtonListeners();
+
+        if (getIntent().hasExtra("selected_fruits")) {
+            selectedIngredients.put("fruits", getIntent().getStringArrayListExtra("selected_fruits"));
+        }
+        if (getIntent().hasExtra("selected_vegetables")) {
+            selectedIngredients.put("vegetables", getIntent().getStringArrayListExtra("selected_vegetables"));
+        }
+        if (getIntent().hasExtra("selected_meats")) {
+            selectedIngredients.put("meat", getIntent().getStringArrayListExtra("selected_meats"));
+        }
+        updateContinueButtonVisibility();
+
     }
 
     private void setupResultLaunchers() {
@@ -82,6 +87,7 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedFruits = result.getData().getStringArrayListExtra("selected_fruits");
                         if (selectedFruits != null) {
                             selectedIngredients.put("fruits", selectedFruits);
+                            updateContinueButtonVisibility();
                         }
                     }
                 }
@@ -95,6 +101,7 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedVegetables = result.getData().getStringArrayListExtra("selected_vegetables");
                         if (selectedVegetables != null) {
                             selectedIngredients.put("vegetables", selectedVegetables);
+                            updateContinueButtonVisibility();
                         }
                     }
                 }
@@ -108,6 +115,7 @@ public class RecipeActivity extends BaseActivity {
                         ArrayList<String> selectedMeats = result.getData().getStringArrayListExtra("selected_meats");
                         if (selectedMeats != null) {
                             selectedIngredients.put("meat", selectedMeats);
+                            updateContinueButtonVisibility();
                         }
                     }
                 }
@@ -119,18 +127,21 @@ public class RecipeActivity extends BaseActivity {
             Intent intent = new Intent(this, RecipeChooseFruit.class);
             intent.putStringArrayListExtra("selected_fruits", selectedIngredients.get("fruits"));
             fruitSelectionLauncher.launch(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         vegetableButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseVegetable.class);
             intent.putStringArrayListExtra("selected_vegetables", selectedIngredients.get("vegetables"));
             vegetableSelectionLauncher.launch(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         meatButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, RecipeChooseMeat.class);
             intent.putStringArrayListExtra("selected_meats", selectedIngredients.get("meat"));
             meatSelectionLauncher.launch(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         continueButton.setOnClickListener(view -> {
@@ -153,13 +164,25 @@ public class RecipeActivity extends BaseActivity {
             }
 
             startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
     }
 
-    private void setupCustomButton(CardView button, int iconResId, int textResId) {
-        ImageView icon = button.findViewById(R.id.button_icon);
-        TextView text = button.findViewById(R.id.button_text);
-        if (icon != null) icon.setImageResource(iconResId);
-        if (text != null) text.setText(textResId);
+    private void updateContinueButtonVisibility() {
+        boolean hasIngredients = false;
+
+        for (ArrayList<String> items : selectedIngredients.values()) {
+            if (!items.isEmpty()) {
+                hasIngredients = true;
+                break;
+            }
+        }
+
+        if (hasIngredients) {
+            continueButton.setVisibility(View.VISIBLE);
+        } else {
+            continueButton.setVisibility(View.GONE); // or INVISIBLE
+        }
     }
+
 }

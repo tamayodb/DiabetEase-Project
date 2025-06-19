@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -24,6 +27,14 @@ public class RecipeChooseVegetable extends AppCompatActivity {
     private VegetableAdapter adapter;
     private List<VegetableItem> vegetableList;
     private ArrayList<String> selectedVegetables;
+    private ArrayList<String> selectedFruits;
+    private ArrayList<String> selectedMeats;
+
+
+    private Button confirmButton;
+
+    private ActivityResultLauncher<Intent> fruitSelectionLauncher;
+    private ActivityResultLauncher<Intent> meatSelectionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,30 +44,90 @@ public class RecipeChooseVegetable extends AppCompatActivity {
         Log.d(TAG, "Starting RecipeChooseVegetable");
 
         ImageView backButton = findViewById(R.id.back_button_recipe);
-        Button confirmButton = findViewById(R.id.confirm_vegetables_button);
+        ImageButton confirmButton = findViewById(R.id.confirm_vegetables_button);
+        ImageButton nextFruitButton = findViewById(R.id.next_fruit);
+        ImageButton nextMeatButton = findViewById(R.id.next_meat);
+
         recyclerView = findViewById(R.id.vegetables_recycler_view);
 
         selectedVegetables = new ArrayList<>();
         vegetableList = new ArrayList<>();
 
-        // Get previously selected vegetables (if returning from result)
-        if (getIntent().hasExtra("selected_vegetables")) {
-            selectedVegetables = getIntent().getStringArrayListExtra("selected_vegetables");
-        }
+        selectedFruits = new ArrayList<>();
+        selectedMeats = new ArrayList<>();
 
         setupRecyclerView();
         loadVegetablesFromFirebase();
 
+        if (getIntent().hasExtra("selected_fruits")) {
+            selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");
+        }
+        if (getIntent().hasExtra("selected_vegetables")) {
+            selectedVegetables = getIntent().getStringArrayListExtra("selected_vegetables");
+        }
+        if (getIntent().hasExtra("selected_meats")) {
+            selectedMeats = getIntent().getStringArrayListExtra("selected_meats");
+        }
+
+
         // Back button click
-        backButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent(RecipeChooseVegetable.this, RecipeActivity.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
 
         // Confirm button click
         confirmButton.setOnClickListener(v -> {
-            Intent resultIntent = new Intent();
-            resultIntent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
-            setResult(RESULT_OK, resultIntent);
-            finish();
+            Intent intent = new Intent(RecipeChooseVegetable.this, RecipeActivity.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
+
+        meatSelectionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        ArrayList<String> selectedMeats = result.getData().getStringArrayListExtra("selected_meats");
+                        Log.d(TAG, "Received selected meats: " + selectedMeats);
+                    }
+                }
+        );
+
+        fruitSelectionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        ArrayList<String> selectedFruits = result.getData().getStringArrayListExtra("selected_fruits");
+                        Log.d(TAG, "Received selected fruits: " + selectedFruits);
+                    }
+                }
+        );
+
+        nextMeatButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RecipeChooseMeat.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats);
+            meatSelectionLauncher.launch(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
+
+        nextFruitButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RecipeChooseFruit.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats);
+            fruitSelectionLauncher.launch(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
+
     }
 
     private void setupRecyclerView() {

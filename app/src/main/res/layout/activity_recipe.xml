@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".RecipeActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -44,13 +45,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mainContent"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginTop="8dp"
+        android:layout_marginStart="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topMenu"
         app:layout_constraintVertical_bias="1.0">
@@ -59,7 +60,6 @@
             android:id="@+id/textView20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="28dp"
             android:fontFamily="@font/poppins_bold"
             android:text="@string/select_ingredients"
@@ -70,11 +70,9 @@
 
         <TextView
             android:id="@+id/textView23"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
             android:fontFamily="@font/poppins_regular"
             android:text="@string/not_sure_what_meal_fits_your_diet_or_diabetes_needs_let_s_create_a_recipe_based_on_what_s_inside_your_fridge"
             android:textColor="@color/black"
@@ -83,63 +81,60 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
-        <include
+
+        <ImageButton
             android:id="@+id/fruit_button"
-            layout="@layout/custom_button"
-            android:layout_width="0dp"
-            android:layout_height="59dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView23" />
-
-        <!-- VEGETABLE BUTTON -->
-        <include
-            android:id="@+id/vegetable_button"
-            layout="@layout/custom_button"
-            android:layout_width="0dp"
-            android:layout_height="59dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fruit_button" />
-
-        <!-- MEAT BUTTON -->
-        <include
-            android:id="@+id/meat_button"
-            layout="@layout/custom_button"
-            android:layout_width="0dp"
-            android:layout_height="59dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/vegetable_button" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/continue_button"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/button_recipe_con"
-            android:fontFamily="@font/poppins_medium"
-            android:text="Generate Food Recipe"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textStyle="normal"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="@string/fruits"
+            android:scaleType="centerInside"
+            android:src="@drawable/fruit_button"
+            app:layout_constraintTop_toBottomOf="@+id/textView23"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageButton
+            android:id="@+id/meat_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="@string/meat_proteins"
+            android:scaleType="centerInside"
+            android:src="@drawable/meat_button"
+            app:layout_constraintTop_toBottomOf="@+id/vegetable_button"
+
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageButton
+            android:id="@+id/vegetable_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="@string/meat_proteins"
+            android:scaleType="centerInside"
+            android:src="@drawable/vegetable_button"
+            app:layout_constraintTop_toBottomOf="@+id/fruit_button"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageButton
+            android:id="@+id/continue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:background="@null"
+            android:contentDescription="@string/meat_proteins"
+            android:scaleType="centerInside"
+            android:src="@drawable/continue_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/meat_button" />
+            app:layout_constraintTop_toBottomOf="@+id/meat_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <FrameLayout
         android:id="@+id/navigationBarContainer"

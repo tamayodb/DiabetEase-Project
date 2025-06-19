@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -23,7 +26,14 @@ public class RecipeChooseMeat extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MeatAdapter adapter;
     private List<MeatItem> meatList;
+    private ArrayList<String> selectedVegetables;
+    private ArrayList<String> selectedFruits;
     private ArrayList<String> selectedMeats;
+
+
+    private Button confirmButton;
+    private ActivityResultLauncher<Intent> vegetableSelectionLauncher;
+    private ActivityResultLauncher<Intent> fruitSelectionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +43,24 @@ public class RecipeChooseMeat extends AppCompatActivity {
         Log.d(TAG, "Starting RecipeChooseMeat");
 
         ImageView backButton = findViewById(R.id.back_button_recipe);
-        Button confirmButton = findViewById(R.id.confirm_meats_button);
+        ImageButton confirmButton = findViewById(R.id.confirm_meats_button);
+        ImageButton nextVegetableButton = findViewById(R.id.next_vegetable);
+        ImageButton nextFruitButton = findViewById(R.id.next_fruit);
         recyclerView = findViewById(R.id.meats_recycler_view);
 
         selectedMeats = new ArrayList<>();
         meatList = new ArrayList<>();
 
+        selectedFruits = new ArrayList<>();
+        selectedVegetables = new ArrayList<>();
+
+
+        if (getIntent().hasExtra("selected_fruits")) {
+            selectedFruits = getIntent().getStringArrayListExtra("selected_fruits");
+        }
+        if (getIntent().hasExtra("selected_vegetables")) {
+            selectedVegetables = getIntent().getStringArrayListExtra("selected_vegetables");
+        }
         if (getIntent().hasExtra("selected_meats")) {
             selectedMeats = getIntent().getStringArrayListExtra("selected_meats");
         }
@@ -48,15 +70,63 @@ public class RecipeChooseMeat extends AppCompatActivity {
         loadMeatsFromFirebase();
 
         // Back button click
-        backButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent(RecipeChooseMeat.this, RecipeActivity.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
 
         // Confirm button click
         confirmButton.setOnClickListener(v -> {
-            Intent resultIntent = new Intent();
-            resultIntent.putStringArrayListExtra("selected_meats", selectedMeats);
-            setResult(RESULT_OK, resultIntent);
-            finish();
+            Intent intent = new Intent(RecipeChooseMeat.this, RecipeActivity.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats);
+            startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
+
+        vegetableSelectionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        ArrayList<String> selectedVegetables = result.getData().getStringArrayListExtra("selected_vegetables");
+                        Log.d(TAG, "Received selected vegetables: " + selectedVegetables);
+                    }
+                }
+        );
+
+        fruitSelectionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        ArrayList<String> selectedFruits = result.getData().getStringArrayListExtra("selected_fruits");
+                        Log.d(TAG, "Received selected fruits: " + selectedFruits);
+                    }
+                }
+        );
+
+        nextVegetableButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RecipeChooseVegetable.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats); //
+            vegetableSelectionLauncher.launch(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
+
+        nextFruitButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RecipeChooseFruit.class);
+            intent.putStringArrayListExtra("selected_fruits", selectedFruits);
+            intent.putStringArrayListExtra("selected_vegetables", selectedVegetables);
+            intent.putStringArrayListExtra("selected_meats", selectedMeats); //
+            fruitSelectionLauncher.launch(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
+
     }
 
     private void setupRecyclerView() {
